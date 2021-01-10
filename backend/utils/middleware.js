@@ -36,8 +36,7 @@ const auth = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, config.SECRET)
-        req.user = decoded
+        req.user = jwt.verify(token, config.SECRET)
     } catch (err) {
         console.log('err in auth middleware', err)
         next(err)
@@ -50,5 +49,5 @@ const auth = (req, res, next) => {
 module.exports = {
     unknownEndpoint,
     errorHandler,
-    tokenExtractor
+    auth
 }
