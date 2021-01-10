@@ -7,6 +7,10 @@ const applicantSchema = new mongoose.Schema({
         ref: 'User',
         required: true,  // Do we need to index? <I guess so; 10/1>
     },
+    name: {
+        type: String,
+        required: true
+    },
     education: [
         {
             instituteName: String,
