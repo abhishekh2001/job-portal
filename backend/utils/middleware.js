@@ -14,7 +14,7 @@ const errorHandler = (err, req, res, next) => {
     } else if (err.name === 'ValidationError') {
         return res.status(400).json({ error: err.message })
     } else if (err.name === 'JsonWebTokenError') {
-        return res.status(401).json({ error: 'invalid token' })
+        return res.status(401).json({ error: 'invalid or missing token' })
     } else if (err.name === 'AuthenticationError') {
         return res.status(400).json({error: err.message})
     } else if (err.name === 'AuthorizationError') {
@@ -26,6 +26,7 @@ const errorHandler = (err, req, res, next) => {
 
 const auth = (req, res, next) => {
     const authorization = req.get('authorization')
+    console.log('authorization', authorization)
     let token = null
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
         token = authorization.substring(7)
@@ -37,12 +38,10 @@ const auth = (req, res, next) => {
 
     try {
         req.user = jwt.verify(token, config.SECRET)
+        next()
     } catch (err) {
-        console.log('err in auth middleware', err)
         next(err)
     }
-
-    next()
 }
 
 

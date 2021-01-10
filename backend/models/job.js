@@ -39,7 +39,8 @@ const jobSchema = new mongoose.Schema({
     duration: {
         type: Number,
         min: 0,
-        max: 6
+        max: 6,
+        required: true
     },
     salaryPerMonth: {
         type: Number,
