@@ -3,8 +3,9 @@ const express = require('express')
 const cors = require('cors')
 const middleware = require('./utils/middleware')
 const config = require('./utils/config')
-const usersRouter = require('./controllers/users')
 const authRouter = require('./controllers/auth')
+const usersRouter = require('./controllers/users')
+const jobsRouter = require('./controllers/jobs')
 
 mongoose.connect(config.MONGODB_URI, {
     useNewUrlParser: true,
@@ -17,8 +18,9 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/users', usersRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/jobs', jobsRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

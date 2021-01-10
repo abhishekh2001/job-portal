@@ -7,7 +7,8 @@ const jobSchema = new mongoose.Schema({
     },
     recruiter: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Recruiter'
+        ref: 'Recruiter',
+        required: [true, 'job must be posted by a recruiter']
     },
     maxApplications: {
         type: Number,
@@ -48,6 +49,12 @@ const jobSchema = new mongoose.Schema({
         type: Number,
         min: 0,
         max: 5
+    }
+})
+
+jobSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        delete ret.__v
     }
 })
 

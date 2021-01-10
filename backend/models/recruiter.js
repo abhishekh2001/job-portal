@@ -8,7 +8,6 @@ const recruiterSchema = new mongoose.Schema({
     },
     contactNumber: {
         type: String,
-        required: true,
     },
     bio: {
         type: String,
@@ -24,8 +23,6 @@ const recruiterSchema = new mongoose.Schema({
 
 recruiterSchema.set('toJSON', {
     transform: (doc, ret) => {
-        ret.id = ret._id.toString()
-        delete ret._id
         delete ret.__v
     }
 })
