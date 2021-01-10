@@ -1,16 +1,11 @@
 const mongoose = require('mongoose')
-const validator = require('validator')
 const validators = require('../utils/validators')
 
 const applicantSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    emailId: {
-        type: String,
-        required: true,
-        validate: [validator.isEmail, 'invalid mail']
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,  // Do we need to index? <I guess so; 10/1>
     },
     education: [
         {
@@ -20,21 +15,28 @@ const applicantSchema = new mongoose.Schema({
                 required: true,
                 validate: {
                     validator: validators.yearValidator,
-                    message: props => `${props.value} is not a valid year!`
+                    message: props => `${props.value} is not a valid year`
                 }
             },
             endYear: {
                 type: Number,
                 validate: {
                     validator: validators.yearValidator,
-                    message: props => `${props.value} is not a valid year!`
+                    message: props => `${props.value} is not a valid year`
                 }
             }
         }
     ],
+    skills: [
+        {
+            type: String
+        }
+    ],
     rating: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0,
+        max: 5
     },
     applications: [
         {
@@ -43,6 +45,15 @@ const applicantSchema = new mongoose.Schema({
         }
     ]
 })
+
+applicantSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        ret.id = ret._id.toString()
+        delete ret._id
+        delete ret.__v
+    }
+})
+
 
 const Applicant = mongoose.model('Applicant', applicantSchema)
 
