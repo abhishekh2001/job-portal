@@ -5,9 +5,13 @@ var uniqueValidator = require('mongoose-unique-validator')
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: true,
+        required: [true, 'email cannot be empty'],
         unique: true,
-        validate: [validator.isEmail, 'invalid email']
+        validate: [validator.isEmail, 'invalid email format']
+    },
+    name: {
+        type: String,
+        required: [true, 'name cannot be empty']
     },
     passwordHash: {
         type: String,
@@ -15,7 +19,8 @@ const userSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['applicant', 'recruiter']
+        enum: ['applicant', 'recruiter'],
+        required: [true, 'type of user must be specified']
     }
 })
 
@@ -28,7 +33,7 @@ userSchema.set('toJSON', {
     }
 })
 
-userSchema.plugin(uniqueValidator)
+userSchema.plugin(uniqueValidator,{message: '{PATH} must be unique'})
 
 const User = mongoose.model('User', userSchema)
 

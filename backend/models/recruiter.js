@@ -6,10 +6,6 @@ const recruiterSchema = new mongoose.Schema({
         ref: 'User',
         required: true,  // Do we need to index? <I guess so; 10/1>
     },
-    name: {
-        type: String,
-        required: true
-    },
     contactNumber: {
         type: String,
         required: true,
@@ -17,6 +13,12 @@ const recruiterSchema = new mongoose.Schema({
     bio: {
         type: String,
         maxlength: 250
+    },
+    rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
     }
 })
 
