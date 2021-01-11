@@ -7,7 +7,7 @@ const unknownEndpoint = (req, res) => {
 }
 
 const errorHandler = (err, req, res, next) => {
-    logger.error(err.message)
+    logger.error('err', err.message)
 
     if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(400).send({ error: 'malformed id' })
@@ -21,6 +21,8 @@ const errorHandler = (err, req, res, next) => {
         return res.status(401).json({error: err.message})
     } else if (err.name === 'DocumentNotFoundError') {
         return res.status(404).json({error: err.message})
+    } else if (err.name === 'BadRequestError') {
+        return res.status(400).json({error: err.message})
     }
 
     next(err)

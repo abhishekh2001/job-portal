@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const applicationSchema = new mongoose.Schema({
     sop: {
@@ -14,7 +15,8 @@ const applicationSchema = new mongoose.Schema({
     applicant: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Applicant',
-        required: true
+        required: true,
+        unique: true
     },
     status: {
         type: String,
@@ -22,6 +24,8 @@ const applicationSchema = new mongoose.Schema({
         default: 'pending'
     }
 })
+
+applicationSchema.plugin(uniqueValidator,{message: '{PATH} must be unique'})
 
 applicationSchema.set('toJSON', {
     transform: (doc, ret) => {
