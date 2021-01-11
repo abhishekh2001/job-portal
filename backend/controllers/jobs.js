@@ -109,7 +109,12 @@ router.delete('/:id', middleware.auth, async (req, res, next) => {
 
     try {
         const job = await Job.findById(id)
-        if (job.recruiter.toString() !== user.id.toString()) {
+        const recruiter = await Recruiter.findOne({user: user.id})
+
+        if (!job) {
+            return res.status(204).end()
+        }
+        if (!recruiter || job.recruiter.toString() !== recruiter._id.toString()) {
             return next({name: 'AuthorizationError', message: 'user does not have permissions'})
         }
         await Job.findByIdAndDelete(id)
