@@ -6,7 +6,16 @@ const router = express.Router()
 
 router.get('/', async (req, res, next) => {
     try {
-        const jobs = await Job.find({}).populate('recruiter', {contactNumber: 1, rating: 1})
+        const jobs = await Job
+            .find({})
+            .populate({
+                path: 'recruiter',
+                model: 'Recruiter',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
         console.log(jobs)
         res.json(jobs)
     } catch (err) {
@@ -74,7 +83,16 @@ router.put('/:id', middleware.auth, async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
     try {
-        const job = await Job.findById(req.params.id).populate('recruiter', {email: 1, name: 1})
+        const job = await Job
+            .findById(req.params.id)
+            .populate({
+            path: 'recruiter',
+            model: 'Recruiter',
+            populate: {
+                path: 'user',
+                model: 'User'
+            }
+        })
         if (job) {
             res.json(job)
         } else {
