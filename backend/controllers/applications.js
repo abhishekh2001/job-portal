@@ -30,7 +30,7 @@ router.get('/', async (req, res, next) => {
 
 // Applicant must be authorized
 // Only applicant can create new application
-router.post('/:jobId', middleware.auth, async (req, res, next) => {
+router.post('/applicant/:jobId', middleware.auth, async (req, res, next) => {
     const jobId = req.params.jobId
     const user = req.user
     const body = req.body
@@ -58,7 +58,6 @@ router.post('/:jobId', middleware.auth, async (req, res, next) => {
                 message: 'maximum positions limit for this job has been reached'
             })
 
-        // TODO: check if user has 10 active applications
         const numUserApplications = await Application
             .countDocuments({applicant: applicant._id, status: 'applied'})
         if (numUserApplications >= 10)
@@ -88,6 +87,71 @@ router.post('/:jobId', middleware.auth, async (req, res, next) => {
         }
     } catch (err) {
         return next(err)
+    }
+})
+
+router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
+    const appId = req.params.appId
+    const user = req.user
+    const body = req.body
+
+    if (user.type !== 'recruiter')
+        return next({name: 'AuthorizationError', message: 'user is not authorized to apply for this job'})
+
+    try {
+        const application = await Application.findById(appId).populate({path: 'job', model: 'Job'})
+        const recruiter = await Recruiter.findOne({user: user.id})
+
+        if (!application)
+            return next({name: 'BadRequestError', message: 'application is not available'})
+        if (!recruiter)
+            return next({name: 'AuthorizationError', message: 'user is not authorized to perform this operation'})
+
+        if (application.job.recruiter._id.toString() !== recruiter._id.toString())
+            return next({name: 'AuthorizationError', message: 'user is not authorized to perform this operation (did not create job)'})
+        if (application.job.positionStatus === 'full')
+            return next({name: 'BadRequestError', message: 'maximum positions limit has been met for this job'})
+
+        if (!body.status)
+            return next({name: 'BadRequestError', message: 'status field is required'})
+
+        // TODO: test maxApplications
+        const uApp = application.toJSON()
+        if (body.status === 'accepted') {
+            if (application.status !== 'shortlisted')
+                return next({name: 'BadRequestError', message: 'application must be shortlisted first'})
+            uApp.status = 'accepted'
+        } else if (body.status === 'rejected') {  // Prevent reject if application is accepted
+            uApp.status = 'rejected'
+        } else if (body.status === 'shortlisted') {
+            uApp.status = 'shortlisted'
+        } else {
+            return next({name: 'BadRequestError', message: 'status field must be accepted, rejected or shortlisted'})
+        }
+
+        console.log('updating...')
+        const upd = await Application.findByIdAndUpdate(appId, uApp)
+        console.log('updated', upd)
+        const positionsCount = await Application.countDocuments({job: application.job._id, status: 'accepted'})
+        if (positionsCount >= application.job.maxPositions) {
+            const updatedJob = {...application.job, positionStatus: 'full'}
+            await Job.findByIdAndUpdate(application.job._id, updatedJob)
+        }
+
+        console.log('here', positionsCount)
+
+        const updatedApp = await Application.findById(appId).populate('job').populate({
+            path: 'applicant',
+            model: 'Applicant',
+            populate: {
+                path: 'user',
+                model: 'User'
+            }
+        })
+        console.log('updatedApp', updatedApp)
+        res.json(updatedApp)
+    } catch (err) {
+        next(err)
     }
 })
 
