@@ -42,6 +42,16 @@ const jobSchema = new mongoose.Schema({
         max: 6,
         required: true
     },
+    applicationStatus: {
+        type: String,
+        enum: ['free', 'full'],
+        default: 'free'
+    },
+    positionStatus: {
+        type: String,
+        enum: ['free', 'full'],
+        default: 'free'
+    },
     salaryPerMonth: {
         type: Number,
         required: true

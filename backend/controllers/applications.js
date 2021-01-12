@@ -47,8 +47,20 @@ router.post('/:jobId', middleware.auth, async (req, res, next) => {
         if (!applicant)
             return next({name: 'AuthorizationError', message: 'user is not authorized to apply for this job'})
 
+        if (job.applicationStatus === 'full')
+            return next({
+                name: 'BadRequestError',
+                message: 'maximum applications limit for job has been reached'
+            })
+        if (job.positionStatus === 'full')
+            return next({
+                name: 'BadRequestError',
+                message: 'maximum positions limit for this job has been reached'
+            })
+
+        // TODO: check if user has 10 active applications
+
         const prevApplied = await Application.findOne({applicant: applicant._id})
-        console.log('prev', prevApplied)
         if (prevApplied)
             return next({name: 'BadRequestError', message: 'user has already applied to this job'})
         else {
@@ -59,6 +71,12 @@ router.post('/:jobId', middleware.auth, async (req, res, next) => {
             })
 
             const savedApplication = await application.save()
+
+            const numApplications = await Application.countDocuments({job: job._id})
+            if (numApplications >= job.maxApplications) {
+                job.applicationStatus = 'full'
+                await job.save()
+            }
             res.status(201).json(savedApplication)
         }
     } catch (err) {

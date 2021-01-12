@@ -2,6 +2,7 @@ const express = require('express')
 const Job = require('../models/job')
 const middleware = require('../utils/middleware')
 const Recruiter = require('../models/recruiter')
+const Application = require('../models/application')
 const router = express.Router()
 
 router.get('/', async (req, res, next) => {
@@ -66,9 +67,20 @@ router.put('/:id', middleware.auth, async (req, res, next) => {
         const notAllowed = ['id', '_id', 'recruiter']
         for (let field in body) {
             if (!notAllowed.includes(field)) {
+                if (field === 'maxApplications') {
+                    const applicationsCount = await Application
+                        .countDocuments({job: job._id})
+                    uJob['applicationStatus'] = applicationsCount >= body[field] ? 'full' : 'free'
+                }
+                if (field === 'maxPositions') {
+                    const positionsCount = await Application
+                        .countDocuments({job: job._id, status: 'accepted'})
+                    uJob['positionStatus'] = positionsCount >= body[field] ? 'full' : 'free'
+                }
                 uJob[field] = body[field]
             }
         }
+
         const savedJob = await Job.findByIdAndUpdate(req.params.id, uJob, {new: true})
 
         if (!savedJob) {
