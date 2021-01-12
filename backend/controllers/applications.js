@@ -102,6 +102,10 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
         const application = await Application.findById(appId).populate({path: 'job', model: 'Job'})
         const recruiter = await Recruiter.findOne({user: user.id})
 
+        const pc = await Application.countDocuments({job: application.job._id, status: 'accepted'})
+        console.log('here', pc, application.job.maxPositions)
+
+
         if (!application)
             return next({name: 'BadRequestError', message: 'application is not available'})
         if (!recruiter)
@@ -133,12 +137,15 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
         const upd = await Application.findByIdAndUpdate(appId, uApp)
         console.log('updated', upd)
         const positionsCount = await Application.countDocuments({job: application.job._id, status: 'accepted'})
+        console.log('here', positionsCount, application.job.maxPositions, positionsCount >= application.job.maxPositions)
+
         if (positionsCount >= application.job.maxPositions) {
-            const updatedJob = {...application.job, positionStatus: 'full'}
-            await Job.findByIdAndUpdate(application.job._id, updatedJob)
+            console.log('inside')
+            const updatedJob = {...application.job.toJSON(), positionStatus: 'full'}
+            const upd = await Job.findByIdAndUpdate(application.job._id, updatedJob, {new: true})
+            console.log('udpated', upd)
         }
 
-        console.log('here', positionsCount)
 
         const updatedApp = await Application.findById(appId).populate('job').populate({
             path: 'applicant',

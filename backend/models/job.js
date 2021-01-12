@@ -54,7 +54,8 @@ const jobSchema = new mongoose.Schema({
     },
     salaryPerMonth: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'salary must be positive']
     },
     Rating: {
         type: Number,

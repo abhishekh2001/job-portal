@@ -111,6 +111,21 @@ router.get('/:id', async (req, res, next) => {
     }
 })
 
+router.get('/applications/:jobId', async (req, res, next) => {
+    const jobId = req.params.jobId
+
+    try {
+        const job = await Job.findById(jobId)
+        if (!job)
+            return next({name: 'DocumentNotFoundError', message: 'job not found'})
+
+        const applications = await Application.find({job: jobId})
+        res.json(applications)
+    } catch (err) {
+        next(err)
+    }
+})
+
 router.delete('/:id', middleware.auth, async (req, res, next) => {
     const id = req.params.id
     const user = req.user
