@@ -52,16 +52,12 @@ router.put('/:id', middleware.auth, async (req, res, next) => {
     try {
         const job = await Job.findById(id)
         const recruiter = await Recruiter.findOne({user: user.id})
-        if (!job) {
+        if (!job)
             return next({name: 'DocumentNotFoundError', message: 'job not found'})
-        }
-        if (!recruiter) {
+        if (!recruiter)
             return next({name: 'AuthorizationError', message: 'user does not have permissions'})
-        }
-
-        if (job.recruiter.toString() !== recruiter._id.toString()) {
+        if (job.recruiter.toString() !== recruiter._id.toString())
             return next({name: 'AuthorizationError', message: 'user does not have permissions'})
-        }
 
         const uJob = job.toJSON()
         const notAllowed = ['id', '_id', 'recruiter']

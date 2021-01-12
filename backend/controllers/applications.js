@@ -59,8 +59,15 @@ router.post('/:jobId', middleware.auth, async (req, res, next) => {
             })
 
         // TODO: check if user has 10 active applications
+        const numUserApplications = await Application
+            .countDocuments({applicant: applicant._id, status: 'applied'})
+        if (numUserApplications >= 10)
+            return next({
+                name: 'BadRequestError',
+                message: 'user has 10 open applications'
+            })
 
-        const prevApplied = await Application.findOne({applicant: applicant._id})
+        const prevApplied = await Application.findOne({applicant: applicant._id, job: job._id})
         if (prevApplied)
             return next({name: 'BadRequestError', message: 'user has already applied to this job'})
         else {
