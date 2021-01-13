@@ -8,6 +8,7 @@ const usersRouter = require('./controllers/users')
 const jobsRouter = require('./controllers/jobs')
 const applicationsRouter = require('./controllers/applications')
 const recruitersRouter = require('./controllers/recruiters')
+const applicantsRouter = require('./controllers/applicants')
 
 mongoose.connect(config.MONGODB_URI, {
     useNewUrlParser: true,
@@ -21,10 +22,11 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/api/auth', authRouter)
-app.use('/api/users', usersRouter)
 app.use('/api/jobs', jobsRouter)
+app.use('/api/users', usersRouter)
 app.use('/api/apply', applicationsRouter)
 app.use('/api/recruiters', recruitersRouter)
+app.use('/api/applicants', applicantsRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

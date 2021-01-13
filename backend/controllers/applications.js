@@ -102,6 +102,10 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
         const application = await Application.findById(appId).populate({path: 'job', model: 'Job'})
         const recruiter = await Recruiter.findOne({user: user.id})
 
+        if (!application || !recruiter) {
+            return next({name: 'BadRequestError', message: 'application or recruiter not found'})
+        }
+
         const pc = await Application.countDocuments({job: application.job._id, status: 'accepted'})
         console.log('here', pc, application.job.maxPositions)
 
