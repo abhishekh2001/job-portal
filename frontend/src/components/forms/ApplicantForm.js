@@ -30,7 +30,13 @@ import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft'
 import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter'
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight'
 import FormatAlignJustifyIcon from '@material-ui/icons/FormatAlignJustify'
+import {spacing} from '@material-ui/system'
+import {useState} from 'react'
+import {Alert} from '@material-ui/lab'
 
+// TODO: Education
+
+const languages = ['C++', 'C', 'Java', 'Python', 'Javascript']
 
 const validationSchema = yup.object({
     email: yup
@@ -51,20 +57,28 @@ const validationSchema = yup.object({
 })
 
 
-const App = () => (
+const App = ({setMessage}) => (
     <Formik
         initialValues={{
             email: '',
             password: '',
             name: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            skills: []
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, {setSubmitting}) => {
-            setTimeout(() => {
-                setSubmitting(false)
-                console.log('values', values)
-            }, 500)
+        onSubmit={async (values, {setSubmitting}) => {
+            try {
+                const regBody = {...values, type: 'recruiter'}
+                // const savedUser = await authService.register(regBody)
+                setMessage(null)
+                console.log('savedUser', regBody)
+            } catch (err) {  // TODO: Simplify
+                console.log('err', err)
+                // console.log('err', err.response.data.error)
+                // setMessage(err.response.data.error)
+            }
+            setSubmitting(false)
         }}
     >
         {({submitForm, isSubmitting, touched, errors}) => (
@@ -106,6 +120,28 @@ const App = () => (
                         autoComplete='off'
                     />
                 </Box>
+                <Box marginTop={2} marginBottom={2}>
+                    <Field
+                        name="skills"
+                        multiple
+                        freeSolo
+                        component={Autocomplete}
+                        options={languages}
+                        style={{width: 200}}
+                        renderInput={(params: AutocompleteRenderInputParams) => (
+                            <MuiTextField
+                                {...params}
+                                error={touched['skills'] && !!errors['skills']}
+                                helperText={touched['skills'] && errors['skills']}
+                                label="Skills"
+                                variant="outlined"
+                            />
+                        )}
+                    />
+                </Box>
+
+
+
                 {isSubmitting && <LinearProgress/>}
                 <Box>
                     <Button
@@ -118,26 +154,20 @@ const App = () => (
                     </Button>
                 </Box>
             </Form>
+
         )}
     </Formik>
 )
 
 
 const ApplicantForm = (props) => {
-    const handleSubmit = async (values) => {
-        try {
-            const regBody = {...values, type: 'recruiter'}
-            const savedUser = await authService.register(regBody)
-            console.log('savedUser', savedUser)
-        } catch (err) {  // TODO: Simplify
-            console.log('err', err.response.data.error)
-            props.setMessage(err.response.data.error)
-        }
-    }
+    const [message, setMessage] = useState(null)
 
     return (
         <div>
-            <App/>
+            {message && <Alert severity="error">{message}</Alert>}
+
+            <App setMessage={setMessage}/>
         </div>
     )
 }
