@@ -16,15 +16,6 @@ import {useState} from 'react'
 import {Alert} from '@material-ui/lab'
 import useStyles from '../styles/formStyles'
 
-const wordCount = (str) => {
-    return str.split(' ')
-        .filter(function (n) {
-            return n !== ''
-        })
-        .length
-}
-
-
 const validationSchema = yup.object({
     email: yup
         .string('Enter your email')
@@ -32,23 +23,7 @@ const validationSchema = yup.object({
         .required('Email is required'),
     password: yup
         .string('Enter your password')
-        .min(8, 'Password should be of minimum 8 characters length')
-        .required('Password is required'),
-    confirmPassword: yup
-        .string('Enter your password')
-        .required('Confirm your password')
-        .oneOf([yup.ref('password')], 'Password does not match'),
-    name: yup
-        .string('Enter your name')
-        .required('Name is required'),
-    bio: yup
-        .string('Enter your bio')
-        .test('wordcount',
-            'Bio is limited to 250 characters',
-            (v, c) => !v || wordCount(v) <= 250),
-    contactNumber: yup
-        .string('Enter your contact number')
-        .required('Contact number is required')
+        .required('Password is required')
 })
 
 
@@ -56,20 +31,17 @@ const App = ({setMessage, classes}) => (
     <Formik
         initialValues={{
             email: '',
-            name: '',
-            password: '',
-            confirmPassword: '',
-            bio: '',
-            contactNumber: ''
+            password: ''
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, {setSubmitting}) => {
             console.log('Submitting')
             try {
-                const regBody = {...values, type: 'recruiter'}
-                const savedUser = await authService.register(regBody)
+                const regBody = {...values}
+                const response = await authService.login(regBody)
                 setMessage(null)
-                console.log('savedUser', savedUser)
+                console.log('savedUser', response)
+                localStorage.setItem('token', response.token)
             } catch (err) {
                 console.log('err', err.response.data.error)
                 setMessage(err.response.data.error)
@@ -80,18 +52,6 @@ const App = ({setMessage, classes}) => (
         {({submitForm, isSubmitting, touched, errors}) => (
             <Form className={classes.form}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Field
-                            component={TextField}
-                            label="Name"
-                            name="name"
-                            placeholder="Jon Doe"
-                            autoComplete='off'
-                            variant="outlined"
-                            required
-                            fullWidth
-                        />
-                    </Grid>
                     <Grid item xs={12}>
                         <Field
                             component={TextField}
@@ -117,42 +77,6 @@ const App = ({setMessage, classes}) => (
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <Field
-                            component={TextField}
-                            type="password"
-                            label="ConfirmPassword"
-                            name="confirmPassword"
-                            autoComplete='off'
-                            variant="outlined"
-                            required
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Field
-                            component={TextField}
-                            type="text"
-                            label="Bio"
-                            name="bio"
-                            autoComplete='off'
-                            variant="outlined"
-                            required
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Field
-                            component={TextField}
-                            type="text"
-                            label="ContactNumber"
-                            name="contactNumber"
-                            autoComplete='off'
-                            variant="outlined"
-                            required
-                            fullWidth
-                        />
-                    </Grid>
                     {isSubmitting && <LinearProgress/>}
                 </Grid>
 
@@ -168,12 +92,8 @@ const App = ({setMessage, classes}) => (
                 </Button>
                 <Grid container justify="flex-end">
                     <Grid item>
-                        <Link href="/login" variant="body2">
-                            Already have an account? Sign in
-                        </Link>
-                        <br/>
                         <Link href="/register" variant="body2">
-                            Choose type of user
+                            Don't have an account? Sign up!
                         </Link>
                     </Grid>
                 </Grid>
@@ -183,7 +103,7 @@ const App = ({setMessage, classes}) => (
 )
 
 
-const RecruiterForm = () => {
+const LoginForm = () => {
     const [message, setMessage] = useState(null)
     const classes = useStyles()
 
@@ -196,7 +116,7 @@ const RecruiterForm = () => {
                     <LockOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign up
+                    Sign in
                 </Typography>
 
                 {message && <Alert severity="error">{message}</Alert>}
@@ -206,5 +126,5 @@ const RecruiterForm = () => {
     )
 }
 
-export default RecruiterForm
+export default LoginForm
 

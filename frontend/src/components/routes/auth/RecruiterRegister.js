@@ -2,10 +2,10 @@ import RecruiterForm from '../../forms/RecruiterForm'
 
 const RecruiterRegister = () => {
     return (
-        <div>
+        <div style={{marginBottom: '50px'}}>
             <RecruiterForm />
         </div>
     )
 }
 
-export default RecruiterForm
+export default RecruiterRegister

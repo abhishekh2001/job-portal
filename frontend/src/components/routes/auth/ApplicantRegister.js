@@ -2,7 +2,7 @@ import ApplicantForm from '../../forms/ApplicantForm'
 
 const ApplicantRegister = () => {
     return (
-        <div>
+        <div style={{marginBottom: '50px'}}>
             <ApplicantForm />
         </div>
     )
