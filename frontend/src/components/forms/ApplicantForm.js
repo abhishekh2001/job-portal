@@ -30,15 +30,6 @@ import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft'
 import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter'
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight'
 import FormatAlignJustifyIcon from '@material-ui/icons/FormatAlignJustify'
-import {useState} from 'react'
-import {Alert} from '@material-ui/lab'
-
-
-const wordCount = (str) => {
-    return str.split(' ')
-        .filter(function(n) { return n !== '' })
-        .length;
-}
 
 
 const validationSchema = yup.object({
@@ -51,45 +42,29 @@ const validationSchema = yup.object({
         .min(8, 'Password should be of minimum 8 characters length')
         .required('Password is required'),
     confirmPassword: yup
-        .string("Enter your password")
-        .required("Confirm your password")
-        .oneOf([yup.ref("password")], "Password does not match"),
+        .string('Enter your password')
+        .required('Confirm your password')
+        .oneOf([yup.ref('password')], 'Password does not match'),
     name: yup
-        .string("Enter your name")
+        .string('Enter your name')
         .required('Name is required'),
-    bio: yup
-        .string("Enter your bio")
-        .test('wordcount',
-            'Bio is limited to 250 characters',
-            (v, c) => !v || wordCount(v) <= 250),
-    contactNumber: yup
-        .string("Enter your contact number")
-        .required("Contact number is required")
 })
 
 
-const App = ({setMessage}) => (
+const App = () => (
     <Formik
         initialValues={{
             email: '',
-            name: '',
             password: '',
-            confirmPassword: '',
-            bio: '',
-            contactNumber: ''
+            name: '',
+            confirmPassword: ''
         }}
         validationSchema={validationSchema}
-        onSubmit={async (values, {setSubmitting}) => {
-            try {
-                const regBody = {...values, type: 'recruiter'}
-                const savedUser = await authService.register(regBody)
-                setMessage(null)
-                console.log('savedUser', savedUser)
-            } catch (err) {  // TODO: Simplify
-                console.log('err', err.response.data.error)
-                setMessage(err.response.data.error)
-            }
-            setSubmitting(false)
+        onSubmit={(values, {setSubmitting}) => {
+            setTimeout(() => {
+                setSubmitting(false)
+                console.log('values', values)
+            }, 500)
         }}
     >
         {({submitForm, isSubmitting, touched, errors}) => (
@@ -131,24 +106,6 @@ const App = ({setMessage}) => (
                         autoComplete='off'
                     />
                 </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        label="Bio"
-                        name="bio"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        label="ContactNumber"
-                        name="contactNumber"
-                        autoComplete='off'
-                    />
-                </Box>
                 {isSubmitting && <LinearProgress/>}
                 <Box>
                     <Button
@@ -166,16 +123,24 @@ const App = ({setMessage}) => (
 )
 
 
-const RecruiterForm = () => {
-    const [message, setMessage] = useState(null)
+const ApplicantForm = (props) => {
+    const handleSubmit = async (values) => {
+        try {
+            const regBody = {...values, type: 'recruiter'}
+            const savedUser = await authService.register(regBody)
+            console.log('savedUser', savedUser)
+        } catch (err) {  // TODO: Simplify
+            console.log('err', err.response.data.error)
+            props.setMessage(err.response.data.error)
+        }
+    }
 
     return (
         <div>
-            {message && <Alert severity="error">{message}</Alert>}
-            <App setMessage={setMessage} />
+            <App/>
         </div>
     )
 }
 
-export default RecruiterForm
+export default ApplicantForm
 
