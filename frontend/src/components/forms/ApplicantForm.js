@@ -4,32 +4,24 @@ import {Formik, Form, Field, FieldArray, getIn} from 'formik'
 import {
     Button,
     LinearProgress,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    FormControlLabel,
-    Typography, Divider, CssBaseline, Avatar, Container, Grid, Link,
+    Typography,
+    makeStyles, Container, CssBaseline, Avatar, Grid, Link,
 } from '@material-ui/core'
-import MuiTextField from '@material-ui/core/TextField'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import MuiTextField from '@material-ui/core/TextField';
+
 import {
-    fieldToTextField,
     TextField,
-    TextFieldProps,
-    Select,
-    Switch,
 } from 'formik-material-ui'
-import {MuiPickersUtilsProvider} from '@material-ui/pickers'
+
 import {
     Autocomplete,
-    ToggleButtonGroup,
     AutocompleteRenderInputParams,
-} from 'formik-material-ui-lab'  // TODO: fix
-import {spacing} from '@material-ui/system'
-import React, {useState} from 'react'
+} from 'formik-material-ui-lab'
 import {Alert} from '@material-ui/lab'
-import * as Yup from 'yup'
-import {makeStyles} from '@material-ui/core/styles'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import {useState} from 'react'
+
+
 const useStyles = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
@@ -68,19 +60,19 @@ const validationSchema = yup.object({
     name: yup
         .string('Enter your name')
         .required('Name is required'),
-    education: Yup.array().of(
-        Yup.object().shape({
-            instituteName: Yup
+    education: yup.array().of(
+        yup.object().shape({
+            instituteName: yup
                 .string()
                 .required('Institute name is required'),
-            startYear: Yup
+            startYear: yup
                 .number('Must be a number')
                 .required('Start year is required')
                 .min(1800, 'Invalid year')
                 .max(2040, 'Range not supported'),
-            endYear: Yup
+            endYear: yup
                 .number()
-                .min(Yup.ref('startYear'), 'End year must be after start')
+                .min(yup.ref('startYear'), 'End year must be after start')
                 .max(2040, 'Range not supported')
         })
     )
@@ -95,7 +87,14 @@ const App = ({setMessage, classes}) => (
             name: '',
             confirmPassword: '',
             skills: [],
-            education: []
+            education: [
+                {
+                    key: Math.random(),
+                    instituteName: '',
+                    startYear: '',
+                    endYear: ''
+                }
+            ]
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, {setSubmitting}) => {
@@ -113,14 +112,13 @@ const App = ({setMessage, classes}) => (
     >
         {({
               values,
-              submitForm,
               isSubmitting,
               touched,
               errors
           }) => (
             <Form className={classes.form}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                         <Field
                             component={TextField}
                             label="Name"
@@ -132,7 +130,7 @@ const App = ({setMessage, classes}) => (
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                         <Field
                             component={TextField}
                             name="email"
@@ -145,7 +143,7 @@ const App = ({setMessage, classes}) => (
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                         <Field
                             component={TextField}
                             type="password"
@@ -157,7 +155,7 @@ const App = ({setMessage, classes}) => (
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                         <Field
                             component={TextField}
                             type="password"
@@ -169,7 +167,7 @@ const App = ({setMessage, classes}) => (
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                         <Field
                             name="skills"
                             multiple
@@ -177,7 +175,6 @@ const App = ({setMessage, classes}) => (
                             component={Autocomplete}
                             options={languages}
                             variant="outlined"
-                            required
                             fullWidth
                             renderInput={(params: AutocompleteRenderInputParams) => (
                                 <MuiTextField
@@ -186,11 +183,15 @@ const App = ({setMessage, classes}) => (
                                     helperText={touched['skills'] && errors['skills']}
                                     label="Skills"
                                     variant="outlined"
+                                    fullWidth
                                 />
                             )}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
+                        <Typography component="h1" variant="h5">
+                            Education
+                        </Typography>
                         <FieldArray name="education">
                             {({push, remove}) => (
                                 <div>
@@ -207,6 +208,8 @@ const App = ({setMessage, classes}) => (
                                                     label="Institute Name"
                                                     name={instituteName}
                                                     autoComplete='off'
+                                                    variant="outlined"
+                                                    fullWidth
                                                 />
                                                 <Field
                                                     component={TextField}
@@ -224,10 +227,10 @@ const App = ({setMessage, classes}) => (
                                                 />
 
                                                 <Button
-                                                    margin="normal"
                                                     type="button"
                                                     color="secondary"
                                                     variant="outlined"
+                                                    style={{marginTop: '5px'}}
                                                     onClick={() => remove(index)}
                                                 >
                                                     x
@@ -241,52 +244,54 @@ const App = ({setMessage, classes}) => (
                                         onClick={() =>
                                             push({key: Math.random(), instituteName: '', startYear: '', endYear: ''})
                                         }
+                                        style={{marginTop: '15px'}}
                                     >
-                                        Add
+                                        Add Education
                                     </Button>
                                 </div>
                             )}
                         </FieldArray>
                     </Grid>
-
+                    {isSubmitting && <LinearProgress/>}
                 </Grid>
-
-
-                {isSubmitting && <LinearProgress/>}
                 <Button
                     variant="contained"
                     color="primary"
+                    fullWidth
+                    type="submit"
                     disabled={isSubmitting}
+                    className={classes.submit}
                 >
                     Submit
                 </Button>
                 <Grid container justify="flex-end">
                     <Grid item>
-                        <Link href="#" variant="body2">
+                        <Link href="/login" variant="body2">
                             Already have an account? Sign in
+                        </Link>
+                        <br/>
+                        <Link href="/register" variant="body2">
+                            Choose type of user
                         </Link>
                     </Grid>
                 </Grid>
             </Form>
-
         )}
     </Formik>
 )
 
-
-const ApplicantForm = (props) => {
+const ApplicantForm = () => {
     const [message, setMessage] = useState(null)
     const classes = useStyles()
 
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline/>
+            <CssBaseline />
             <div className={classes.paper}>
-
                 <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon/>
+                    <LockOutlinedIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5">
+                <Typography component="h1" variant="h4">
                     Sign up
                 </Typography>
 
