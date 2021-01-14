@@ -8,7 +8,7 @@ import {
     FormControl,
     InputLabel,
     FormControlLabel,
-    Typography, Divider,
+    Typography, Divider, CssBaseline, Avatar, Container, Grid, Link,
 } from '@material-ui/core'
 import MuiTextField from '@material-ui/core/TextField'
 import {
@@ -23,36 +23,34 @@ import {
     Autocomplete,
     ToggleButtonGroup,
     AutocompleteRenderInputParams,
-} from 'formik-material-ui-lab'
-import Box from '@material-ui/core/Box'
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft'
-import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter'
-import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight'
-import FormatAlignJustifyIcon from '@material-ui/icons/FormatAlignJustify'
+} from 'formik-material-ui-lab'  // TODO: fix
 import {spacing} from '@material-ui/system'
 import React, {useState} from 'react'
 import {Alert} from '@material-ui/lab'
-import EducationForm from './EducationForm'
 import * as Yup from 'yup'
 import {makeStyles} from '@material-ui/core/styles'
-
-// TODO: Education
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+}))
 
 const languages = ['C++', 'C', 'Java', 'Python', 'Javascript']
-
-const useStyles = makeStyles(theme => ({
-    container: {
-        display: 'flex',
-        flexWrap: 'wrap'
-    },
-    button: {
-        margin: theme.spacing(1)
-    },
-    field: {
-        margin: theme.spacing(1)
-    }
-}))
 
 const validationSchema = yup.object({
     email: yup
@@ -82,7 +80,7 @@ const validationSchema = yup.object({
                 .max(2040, 'Range not supported'),
             endYear: Yup
                 .number()
-                .min(Yup.ref("startYear"), 'End year must be after start')
+                .min(Yup.ref('startYear'), 'End year must be after start')
                 .max(2040, 'Range not supported')
         })
     )
@@ -97,14 +95,7 @@ const App = ({setMessage, classes}) => (
             name: '',
             confirmPassword: '',
             skills: [],
-            education: [
-                {
-                    key: Math.random(),
-                    instituteName: '',
-                    startYear: '',
-                    endYear: ''
-                }
-            ]
+            education: []
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, {setSubmitting}) => {
@@ -113,163 +104,169 @@ const App = ({setMessage, classes}) => (
                 const savedUser = await authService.register(regBody)
                 setMessage(null)
                 console.log('savedUser', savedUser)
-            } catch (err) {  // TODO: Simplify
+            } catch (err) {
                 console.log('err', err)
                 setMessage(err.response.data.error)
             }
             setSubmitting(false)
         }}
     >
-        {({values,
-              handleChange,
-              handleBlur,
+        {({
+              values,
               submitForm,
               isSubmitting,
               touched,
               errors
-        }) => (
-            <Form>
-                <Box>
-                    <Field
-                        component={TextField}
-                        label="Name"
-                        name="name"
-                        placeholder="Jon Doe"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        name="email"
-                        type="email"
-                        label="Email"
-                        placeholder="jon.doe@example.com"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="password"
-                        label="Password"
-                        name="password"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="password"
-                        label="ConfirmPassword"
-                        name="confirmPassword"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box marginTop={2} marginBottom={2}>
-                    <Field
-                        name="skills"
-                        multiple
-                        freeSolo
-                        component={Autocomplete}
-                        options={languages}
-                        style={{width: 200}}
-                        renderInput={(params: AutocompleteRenderInputParams) => (
-                            <MuiTextField
-                                {...params}
-                                error={touched['skills'] && !!errors['skills']}
-                                helperText={touched['skills'] && errors['skills']}
-                                label="Skills"
-                                variant="outlined"
-                            />
-                        )}
-                    />
-                </Box>
-                <Box>
-
-                    <FieldArray name="education">
-                        {({push, remove}) => (
-                            <div>
-                                {values.education.map((p, index) => {
-                                    const instituteName = `education[${index}].instituteName`
-                                    const touchedName = getIn(touched, instituteName)
-                                    const errorName = getIn(errors, instituteName)
-
-                                    const startYear = `education[${index}].startYear`
-                                    const touchedStartYear = getIn(touched, startYear)
-                                    const errorStartYear = getIn(errors, startYear)
-
-                                    const endYear = `education[${index}].endYear`
-                                    const touchedEndYear = getIn(touched, endYear)
-                                    const errorEndYear = getIn(errors, endYear)
-
-                                    return (
-                                        <div key={p.key}>
-                                            <Field
-                                                component={TextField}
-                                                type="text"
-                                                label="Institute Name"
-                                                name={instituteName}
-                                                autoComplete='off'
-                                            />
-                                            <Field
-                                                component={TextField}
-                                                type="number"
-                                                label="Start Year"
-                                                name={startYear}
-                                                autoComplete='off'
-                                            />
-                                            <Field
-                                                component={TextField}
-                                                type="number"
-                                                label="End Year"
-                                                name={endYear}
-                                                autoComplete='off'
-                                            />
-
-                                            <Button
-                                                className={classes.button}
-                                                margin="normal"
-                                                type="button"
-                                                color="secondary"
-                                                variant="outlined"
-                                                onClick={() => remove(index)}
-                                            >
-                                                x
-                                            </Button>
-                                        </div>
-                                    )
-                                })}
-                                <Button
-                                    className={classes.button}
-                                    type="button"
+          }) => (
+            <Form className={classes.form}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            label="Name"
+                            name="name"
+                            placeholder="Jon Doe"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            name="email"
+                            type="email"
+                            label="Email"
+                            placeholder="jon.doe@example.com"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            type="password"
+                            label="Password"
+                            name="password"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            type="password"
+                            label="ConfirmPassword"
+                            name="confirmPassword"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            name="skills"
+                            multiple
+                            freeSolo
+                            component={Autocomplete}
+                            options={languages}
+                            variant="outlined"
+                            required
+                            fullWidth
+                            renderInput={(params: AutocompleteRenderInputParams) => (
+                                <MuiTextField
+                                    {...params}
+                                    error={touched['skills'] && !!errors['skills']}
+                                    helperText={touched['skills'] && errors['skills']}
+                                    label="Skills"
                                     variant="outlined"
-                                    onClick={() =>
-                                        push({key: Math.random(), instituteName: '', startYear: '', endYear: ''})
-                                    }
-                                >
-                                    Add
-                                </Button>
-                            </div>
-                        )}
-                    </FieldArray>
-                    <Divider style={{marginTop: 20, marginBottom: 20}}/>
+                                />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <FieldArray name="education">
+                            {({push, remove}) => (
+                                <div>
+                                    {values.education.map((p, index) => {
+                                        const instituteName = `education[${index}].instituteName`
+                                        const startYear = `education[${index}].startYear`
+                                        const endYear = `education[${index}].endYear`
 
-                </Box>
+                                        return (
+                                            <div key={p.key}>
+                                                <Field
+                                                    component={TextField}
+                                                    type="text"
+                                                    label="Institute Name"
+                                                    name={instituteName}
+                                                    autoComplete='off'
+                                                />
+                                                <Field
+                                                    component={TextField}
+                                                    type="number"
+                                                    label="Start Year"
+                                                    name={startYear}
+                                                    autoComplete='off'
+                                                />
+                                                <Field
+                                                    component={TextField}
+                                                    type="number"
+                                                    label="End Year"
+                                                    name={endYear}
+                                                    autoComplete='off'
+                                                />
 
+                                                <Button
+                                                    margin="normal"
+                                                    type="button"
+                                                    color="secondary"
+                                                    variant="outlined"
+                                                    onClick={() => remove(index)}
+                                                >
+                                                    x
+                                                </Button>
+                                            </div>
+                                        )
+                                    })}
+                                    <Button
+                                        type="button"
+                                        variant="outlined"
+                                        onClick={() =>
+                                            push({key: Math.random(), instituteName: '', startYear: '', endYear: ''})
+                                        }
+                                    >
+                                        Add
+                                    </Button>
+                                </div>
+                            )}
+                        </FieldArray>
+                    </Grid>
+
+                </Grid>
 
 
                 {isSubmitting && <LinearProgress/>}
-                <Box>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        disabled={isSubmitting}
-                        onClick={submitForm}
-                    >
-                        Submit
-                    </Button>
-                </Box>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={isSubmitting}
+                >
+                    Submit
+                </Button>
+                <Grid container justify="flex-end">
+                    <Grid item>
+                        <Link href="#" variant="body2">
+                            Already have an account? Sign in
+                        </Link>
+                    </Grid>
+                </Grid>
             </Form>
 
         )}
@@ -282,11 +279,21 @@ const ApplicantForm = (props) => {
     const classes = useStyles()
 
     return (
-        <div>
-            {message && <Alert severity="error">{message}</Alert>}
+        <Container component="main" maxWidth="xs">
+            <CssBaseline/>
+            <div className={classes.paper}>
 
-            <App setMessage={setMessage} classes={classes}/>
-        </div>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon/>
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    Sign up
+                </Typography>
+
+                {message && <Alert severity="error">{message}</Alert>}
+                <App setMessage={setMessage} classes={classes}/>
+            </div>
+        </Container>
     )
 }
 

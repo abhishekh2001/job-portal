@@ -4,40 +4,44 @@ import {Formik, Form, Field} from 'formik'
 import {
     Button,
     LinearProgress,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    FormControlLabel,
     Typography,
+    makeStyles, Container, CssBaseline, Avatar, Grid, Link,
 } from '@material-ui/core'
-import MuiTextField from '@material-ui/core/TextField'
 import {
-    fieldToTextField,
     TextField,
-    TextFieldProps,
-    Select,
-    Switch,
 } from 'formik-material-ui'
-import {MuiPickersUtilsProvider} from '@material-ui/pickers'
-import {
-    Autocomplete,
-    ToggleButtonGroup,
-    AutocompleteRenderInputParams,
-} from 'formik-material-ui-lab'
-import Box from '@material-ui/core/Box'
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft'
-import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter'
-import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight'
-import FormatAlignJustifyIcon from '@material-ui/icons/FormatAlignJustify'
+
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import {useState} from 'react'
 import {Alert} from '@material-ui/lab'
 
 
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+}))
+
 const wordCount = (str) => {
     return str.split(' ')
-        .filter(function(n) { return n !== '' })
-        .length;
+        .filter(function (n) {
+            return n !== ''
+        })
+        .length
 }
 
 
@@ -51,24 +55,24 @@ const validationSchema = yup.object({
         .min(8, 'Password should be of minimum 8 characters length')
         .required('Password is required'),
     confirmPassword: yup
-        .string("Enter your password")
-        .required("Confirm your password")
-        .oneOf([yup.ref("password")], "Password does not match"),
+        .string('Enter your password')
+        .required('Confirm your password')
+        .oneOf([yup.ref('password')], 'Password does not match'),
     name: yup
-        .string("Enter your name")
+        .string('Enter your name')
         .required('Name is required'),
     bio: yup
-        .string("Enter your bio")
+        .string('Enter your bio')
         .test('wordcount',
             'Bio is limited to 250 characters',
             (v, c) => !v || wordCount(v) <= 250),
     contactNumber: yup
-        .string("Enter your contact number")
-        .required("Contact number is required")
+        .string('Enter your contact number')
+        .required('Contact number is required')
 })
 
 
-const App = ({setMessage}) => (
+const App = ({setMessage, classes}) => (
     <Formik
         initialValues={{
             email: '',
@@ -80,12 +84,13 @@ const App = ({setMessage}) => (
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, {setSubmitting}) => {
+            console.log('Submitting')
             try {
                 const regBody = {...values, type: 'recruiter'}
                 const savedUser = await authService.register(regBody)
                 setMessage(null)
                 console.log('savedUser', savedUser)
-            } catch (err) {  // TODO: Simplify
+            } catch (err) {
                 console.log('err', err.response.data.error)
                 setMessage(err.response.data.error)
             }
@@ -93,73 +98,105 @@ const App = ({setMessage}) => (
         }}
     >
         {({submitForm, isSubmitting, touched, errors}) => (
-            <Form>
-                <Box>
-                    <Field
-                        component={TextField}
-                        label="Name"
-                        name="name"
-                        placeholder="Jon Doe"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        name="email"
-                        type="email"
-                        label="Email"
-                        placeholder="jon.doe@example.com"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="password"
-                        label="Password"
-                        name="password"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="password"
-                        label="ConfirmPassword"
-                        name="confirmPassword"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        label="Bio"
-                        name="bio"
-                        autoComplete='off'
-                    />
-                </Box>
-                <Box>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        label="ContactNumber"
-                        name="contactNumber"
-                        autoComplete='off'
-                    />
-                </Box>
-                {isSubmitting && <LinearProgress/>}
-                <Box>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        disabled={isSubmitting}
-                        onClick={submitForm}
-                    >
-                        Submit
-                    </Button>
-                </Box>
+            <Form className={classes.form}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            label="Name"
+                            name="name"
+                            placeholder="Jon Doe"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            name="email"
+                            type="email"
+                            label="Email"
+                            placeholder="jon.doe@example.com"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            type="password"
+                            label="Password"
+                            name="password"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            type="password"
+                            label="ConfirmPassword"
+                            name="confirmPassword"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            type="text"
+                            label="Bio"
+                            name="bio"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Field
+                            component={TextField}
+                            type="text"
+                            label="ContactNumber"
+                            name="contactNumber"
+                            autoComplete='off'
+                            variant="outlined"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    {isSubmitting && <LinearProgress/>}
+                </Grid>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={classes.submit}
+                >
+                    Submit
+                </Button>
+                <Grid container justify="flex-end">
+                    <Grid item>
+                        <Link href="#" variant="body2">
+                            Already have an account? Sign in
+                        </Link>
+                        <br/>
+                        <Link href="/register" variant="body2">
+                            Choose type of user
+                        </Link>
+                    </Grid>
+                </Grid>
             </Form>
         )}
     </Formik>
@@ -168,12 +205,24 @@ const App = ({setMessage}) => (
 
 const RecruiterForm = () => {
     const [message, setMessage] = useState(null)
+    const classes = useStyles()
 
     return (
-        <div>
-            {message && <Alert severity="error">{message}</Alert>}
-            <App setMessage={setMessage} />
-        </div>
+        <Container component="main" maxWidth="xs">
+            <CssBaseline/>
+            <div className={classes.paper}>
+
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon/>
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    Sign up
+                </Typography>
+
+                {message && <Alert severity="error">{message}</Alert>}
+                <App setMessage={setMessage} classes={classes}/>
+            </div>
+        </Container>
     )
 }
 
