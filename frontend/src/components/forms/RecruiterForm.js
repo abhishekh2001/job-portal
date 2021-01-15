@@ -15,6 +15,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import {useState} from 'react'
 import {Alert} from '@material-ui/lab'
 import useStyles from '../styles/formStyles'
+import {Redirect} from 'react-router-dom'
 
 const wordCount = (str) => {
     return str.split(' ')
@@ -52,7 +53,7 @@ const validationSchema = yup.object({
 })
 
 
-const App = ({setMessage, classes}) => (
+const App = ({setMessage, classes, setRegistered}) => (
     <Formik
         initialValues={{
             email: '',
@@ -70,11 +71,13 @@ const App = ({setMessage, classes}) => (
                 const savedUser = await authService.register(regBody)
                 setMessage(null)
                 console.log('savedUser', savedUser)
+                setSubmitting(false)
+                setRegistered(true)
             } catch (err) {
                 console.log('err', err.response.data.error)
                 setMessage(err.response.data.error)
+                setSubmitting(false)
             }
-            setSubmitting(false)
         }}
     >
         {({submitForm, isSubmitting, touched, errors}) => (
@@ -184,8 +187,13 @@ const App = ({setMessage, classes}) => (
 
 
 const RecruiterForm = () => {
+    const [registered, setRegistered] = useState(false)
     const [message, setMessage] = useState(null)
     const classes = useStyles()
+
+    if (registered) {
+        return <Redirect to="/login" />
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -200,7 +208,7 @@ const RecruiterForm = () => {
                 </Typography>
 
                 {message && <Alert severity="error">{message}</Alert>}
-                <App setMessage={setMessage} classes={classes}/>
+                <App setMessage={setMessage} classes={classes} setRegistered={setRegistered} />
             </div>
         </Container>
     )

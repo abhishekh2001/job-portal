@@ -21,6 +21,7 @@ import {
 import {Alert} from '@material-ui/lab'
 import {useState} from 'react'
 import useStyles from '../styles/formStyles'
+import {Redirect} from 'react-router-dom'
 
 const languages = ['C++', 'C', 'Java', 'Python', 'Javascript']  // TODO: export
 
@@ -59,7 +60,7 @@ const validationSchema = yup.object({
 })
 
 
-const App = ({setMessage, classes}) => (
+const App = ({setMessage, classes, setRegistered}) => (
     <Formik
         initialValues={{
             email: '',
@@ -83,11 +84,13 @@ const App = ({setMessage, classes}) => (
                 const savedUser = await authService.register(regBody)
                 setMessage(null)
                 console.log('savedUser', savedUser)
+                setSubmitting(false)
+                setRegistered(true)
             } catch (err) {
                 console.log('err', err)
                 setMessage(err.response.data.error)
+                setSubmitting(false)
             }
-            setSubmitting(false)
         }}
     >
         {({
@@ -262,7 +265,12 @@ const App = ({setMessage, classes}) => (
 
 const ApplicantForm = () => {
     const [message, setMessage] = useState(null)
+    const [registered, setRegistered] = useState(false)
     const classes = useStyles()
+
+    if (registered) {
+        return <Redirect to="/login" />
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -276,7 +284,7 @@ const ApplicantForm = () => {
                 </Typography>
 
                 {message && <Alert severity="error">{message}</Alert>}
-                <App setMessage={setMessage} classes={classes}/>
+                <App setMessage={setMessage} classes={classes} setRegistered={setRegistered} />
             </div>
         </Container>
     )

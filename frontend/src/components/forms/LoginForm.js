@@ -15,6 +15,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import {useState} from 'react'
 import {Alert} from '@material-ui/lab'
 import useStyles from '../styles/formStyles'
+import {useAuth} from '../../context/auth'
+import {Redirect} from 'react-router-dom'
 
 const validationSchema = yup.object({
     email: yup
@@ -27,27 +29,14 @@ const validationSchema = yup.object({
 })
 
 
-const App = ({setMessage, classes}) => (
+const App = ({classes, onSubmit}) => (
     <Formik
         initialValues={{
             email: '',
             password: ''
         }}
         validationSchema={validationSchema}
-        onSubmit={async (values, {setSubmitting}) => {
-            console.log('Submitting')
-            try {
-                const regBody = {...values}
-                const response = await authService.login(regBody)
-                setMessage(null)
-                console.log('savedUser', response)
-                localStorage.setItem('access_token', response.token)
-            } catch (err) {
-                console.log('err', err.response.data.error)
-                setMessage(err.response.data.error)
-            }
-            setSubmitting(false)
-        }}
+        onSubmit={onSubmit}
     >
         {({submitForm, isSubmitting, touched, errors}) => (
             <Form className={classes.form}>
@@ -104,8 +93,32 @@ const App = ({setMessage, classes}) => (
 
 
 const LoginForm = () => {
+    const [isLoggedIn, setLoggedIn] = useState(false)
     const [message, setMessage] = useState(null)
     const classes = useStyles()
+
+    const { setAuthTokens } = useAuth()
+
+    const postLogin = async (values, {setSubmitting}) => {
+        console.log('Submitting')
+        try {
+            const regBody = {...values}
+            const result = await authService.login(regBody)
+            setMessage(null)
+            console.log('result', result)
+            setSubmitting(false)
+            setAuthTokens({token: result.token, type: result.type})
+            setLoggedIn(true)
+        } catch (err) {
+            console.log('err', err.response.data.error)
+            setMessage(err.response.data.error)
+            setSubmitting(false)
+        }
+    }
+
+    if (isLoggedIn) {
+        return <Redirect to="/" />
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -120,7 +133,7 @@ const LoginForm = () => {
                 </Typography>
 
                 {message && <Alert severity="error">{message}</Alert>}
-                <App setMessage={setMessage} classes={classes}/>
+                <App classes={classes} onSubmit={postLogin}/>
             </div>
         </Container>
     )

@@ -106,10 +106,10 @@ export default function JobPostDashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const handleDrawerOpen = () => {
-        setOpen(true);
+        setOpen(true)
     }
     const handleDrawerClose = () => {
-        setOpen(false);
+        setOpen(false)
     }
 
     return (

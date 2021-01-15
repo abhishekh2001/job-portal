@@ -36,7 +36,8 @@ router.post('/login', async (req, res, next) => {
         res.json({
             token: token,
             email: user.email,
-            name: user.name
+            name: user.name,
+            type: user.type
         })
     } catch (err) {
         next(err)

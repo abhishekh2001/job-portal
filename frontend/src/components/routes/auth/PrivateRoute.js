@@ -1,12 +1,20 @@
-import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from "react-router-dom";
+import {useAuth} from '../../../context/auth'
 
-function PrivateRoute({ component: Component, ...rest }) {
+function PrivateRoute({type, component: Component, ...rest}) {
+    const { authTokens } = useAuth()
+    console.log('authTokens', authTokens)
 
-    return(
-        <Route {...rest} render={(props) => (
-            <Component {...props} />
-        )}
+    return (
+        <Route
+            {...rest}
+            render={props =>
+                authTokens.token && (type ? authTokens.type === type : true) ? (
+                    <Component {...props} />
+                ) : (
+                    <Redirect to="/login" />
+                )
+            }
         />
     );
 }

@@ -33,6 +33,9 @@ import MuiTextField from '@material-ui/core/TextField'
 import {languages} from '../utils/languages'
 import {typeOfJobsArray} from '../utils/typeOfJob'
 import {durationArray} from '../utils/duration'
+import jobService from '../../services/jobService'
+import {useAuth} from '../../context/auth'
+import {Redirect} from 'react-router-dom'
 
 const validationSchema = yup.object({
     title: yup
@@ -40,10 +43,12 @@ const validationSchema = yup.object({
         .required('Title is required'),
     maxApplications: yup
         .number('Enter max Applications')
+        .integer('Enter a valid integer')
         .min(0, 'Enter a valid number')
         .required('Max number of applicants is required'),
     maxPositions: yup
         .number('Enter max positions')
+        .integer('Enter a valid integer')
         .min(0, 'Enter a valid number')
         .required('Max positions available is required'),
     deadline: yup
@@ -56,12 +61,17 @@ const validationSchema = yup.object({
         .required('Select type of job'),
     duration: yup
         .number('Choose duration')
+        .integer('Enter a valid integer')
         .min(0, 'Select valid duration')
-        .max(6, 'Maximum duration is 6 months or zero (indefinite)')
+        .max(6, 'Maximum duration is 6 months or zero (indefinite)'),
+    salaryPerMonth: yup
+        .number('Choose a salary')
+        .integer('Enter an integer')
+        .min(0)
 })
 
 
-const App = ({setMessage, classes}) => (
+const App = ({onSubmit, classes}) => (
     <Formik
         initialValues={{
             title: '',
@@ -70,21 +80,11 @@ const App = ({setMessage, classes}) => (
             deadline: new Date(),
             skillSetsRequired: [],
             typeOfJob: 'Full-time',
-            duration: '0',  // select
+            duration: '0',
+            salaryPerMonth: ''
         }}
         validationSchema={validationSchema}
-        onSubmit={async (values, {setSubmitting}) => {
-            console.log('Submitting')
-            try {
-                const jobPostBody = {...values, dateOfPosting: new Date()}
-                console.log('jobPostBody', jobPostBody)
-                setMessage(null)
-            } catch (err) {
-                console.log('err', err.response.data.error)
-                setMessage(err.response.data.error)
-            }
-            setSubmitting(false)
-        }}
+        onSubmit={onSubmit}
     >
         {({submitForm, isSubmitting, touched, errors}) => (
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -198,6 +198,19 @@ const App = ({setMessage, classes}) => (
                                     </MenuItem>
                                 ))}
                             </Field>
+
+                            <Grid item xs={12}>
+                                <Field
+                                    component={TextField}
+                                    type="number"
+                                    label="Salary"
+                                    name="salaryPerMonth"
+                                    autoComplete='off'
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                />
+                            </Grid>
                         </Grid>
                         {isSubmitting && <LinearProgress/>}
                     </Grid>
@@ -221,7 +234,31 @@ const App = ({setMessage, classes}) => (
 
 const JobPostForm = () => {
     const [message, setMessage] = useState(null)
+    const [created, setCreated] = useState(false)
     const classes = useStyles()
+
+    const { authTokens } = useAuth()
+
+    const postJob = async (values, {setSubmitting}) => {
+        console.log('Submitting')
+        try {
+            const jobPostBody = {...values, dateOfPosting: new Date()}
+            console.log('jobPostBody', jobPostBody)
+            const response = await jobService.postOne(jobPostBody, authTokens.token)
+            console.log('response', response)
+            setMessage(null)
+            setSubmitting(false)
+            setCreated(true)
+        } catch (err) {
+            console.log('err', err.response.data.error)
+            setMessage(err.response.data.error)
+            setSubmitting(false)
+        }
+    }
+
+    if (created) {
+        return <Redirect to="/dashboard" />
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -232,7 +269,7 @@ const JobPostForm = () => {
                 </Typography>
 
                 {message && <Alert severity="error">{message}</Alert>}
-                <App setMessage={setMessage} classes={classes}/>
+                <App onSubmit={postJob} classes={classes}/>
             </div>
         </Container>
     )
