@@ -8,9 +8,10 @@ import JobPostDashboard from './components/routes/recruiters/JobPostDashboard'
 import {AuthContext} from './context/auth'
 import PrivateRoute from './components/routes/auth/PrivateRoute'
 import {useState} from 'react'
+import Admin from './components/routes/Admin'
 
 const App = () => {
-    const existingTokens = JSON.parse(localStorage.getItem('tokens'))
+    const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
     const [authTokens, setAuthTokens] = useState(existingTokens)
 
     const setTokens = (data) => {
@@ -35,6 +36,8 @@ const App = () => {
                     />
 
                     <Route path='/dashboard' component={Home}/>
+
+                    <Route path='/admin' component={Admin} />
                 </div>
             </BrowserRouter>
         </AuthContext.Provider>

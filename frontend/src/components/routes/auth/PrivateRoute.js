@@ -1,4 +1,4 @@
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom"
 import {useAuth} from '../../../context/auth'
 
 function PrivateRoute({type, component: Component, ...rest}) {
@@ -9,7 +9,7 @@ function PrivateRoute({type, component: Component, ...rest}) {
         <Route
             {...rest}
             render={props =>
-                authTokens.token && (type ? authTokens.type === type : true) ? (
+                authTokens && authTokens.token && (type ? authTokens.type === type : true) ? (
                     <Component {...props} />
                 ) : (
                     <Redirect to="/login" />
