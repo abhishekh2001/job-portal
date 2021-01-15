@@ -4,6 +4,7 @@ import Register from './components/routes/auth/Register'
 import ApplicantRegister from './components/routes/auth/ApplicantRegister'
 import RecruiterRegister from './components/routes/auth/RecruiterRegister'
 import Login from './components/routes/auth/Login'
+import JobPostDashboard from './components/routes/recruiters/JobPostDashboard'
 
 const App = () => {
     return (
@@ -15,6 +16,7 @@ const App = () => {
                 <Route path='/applicantRegister' component={ApplicantRegister} />
                 <Route path='/recruiterRegister' component={RecruiterRegister} />
                 <Route path='/login' component={Login}/>
+                <Route path='/jobPostDashboard' component={JobPostDashboard} />
             </div>
         </BrowserRouter>
     )

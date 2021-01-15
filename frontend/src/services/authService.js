@@ -12,7 +12,9 @@ const login = async (data) => {
     return response.data
 }
 
-export default {
+const authService = {
     register,
     login
 }
+
+export default authService

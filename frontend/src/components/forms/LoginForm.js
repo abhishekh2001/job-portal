@@ -41,7 +41,7 @@ const App = ({setMessage, classes}) => (
                 const response = await authService.login(regBody)
                 setMessage(null)
                 console.log('savedUser', response)
-                localStorage.setItem('token', response.token)
+                localStorage.setItem('access_token', response.token)
             } catch (err) {
                 console.log('err', err.response.data.error)
                 setMessage(err.response.data.error)
