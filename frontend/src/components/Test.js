@@ -18,11 +18,23 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from '../../listitems'
-import JobPostForm from '../../forms/JobPostForm'
 import {Button} from '@material-ui/core'
+import {mainListItems, secondaryListItems} from './listitems'
 
-const drawerWidth = 240
+function Copyright() {
+    return (
+        <Typography variant="body2" color="textSecondary" align="center">
+            {'Copyright © '}
+            <Link color="inherit" href="https://material-ui.com/">
+                Your Website
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
+
+const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -86,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
         height: '100vh',
-        overflow: 'auto'
+        overflow: 'auto',
     },
     container: {
         paddingTop: theme.spacing(4),
@@ -101,20 +113,22 @@ const useStyles = makeStyles((theme) => ({
     fixedHeight: {
         height: 240,
     },
-}))
+}));
 
-export default function JobPostDashboard() {
+export default function Dashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const handleDrawerOpen = () => {
-        setOpen(true)
-    }
+        setOpen(true);
+    };
     const handleDrawerClose = () => {
-        setOpen(false)
-    }
+        setOpen(false);
+    };
+    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
         <div className={classes.root}>
+            <CssBaseline />
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
                     <IconButton
@@ -156,18 +170,31 @@ export default function JobPostDashboard() {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                    <Grid>
-                        {/* TODO: export app + toolbar to component */}
-                        {/* FORM */}
-
-                        <JobPostForm />
-                        {/*<Button color="primary" variant="outlined">Click me!</Button>*/}
-
-
+                    <Grid container spacing={3}>
+                        {/* Chart */}
+                        <Grid item xs={12} md={8} lg={9}>
+                            <Paper className={fixedHeightPaper}>
+                                <Button variant="outlined" color="orange" fullWidth>Chart</Button>
+                            </Paper>
+                        </Grid>
+                        {/* Recent Deposits */}
+                        <Grid item xs={12} md={4} lg={3}>
+                            <Paper className={fixedHeightPaper}>
+                                <Button variant="outlined" color="secondary" fullWidth>Deposits</Button>
+                            </Paper>
+                        </Grid>
+                        {/* Recent Orders */}
+                        <Grid item xs={12}>
+                            <Paper className={classes.paper}>
+                                <Button variant="outlined">Orders</Button>
+                            </Paper>
+                        </Grid>
                     </Grid>
+                    <Box pt={4}>
+                        <Copyright />
+                    </Box>
                 </Container>
             </main>
         </div>
     );
 }
-

@@ -8,7 +8,7 @@ import {
     makeStyles, Container, CssBaseline, Avatar, Grid, Link,
 } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import MuiTextField from '@material-ui/core/TextField';
+import MuiTextField from '@material-ui/core/TextField'
 
 import {
     TextField,
@@ -22,8 +22,7 @@ import {Alert} from '@material-ui/lab'
 import {useState} from 'react'
 import useStyles from '../styles/formStyles'
 import {Redirect} from 'react-router-dom'
-
-const languages = ['C++', 'C', 'Java', 'Python', 'Javascript']  // TODO: export
+import {languages} from '../utils/languages'
 
 const validationSchema = yup.object({
     email: yup
@@ -177,61 +176,72 @@ const App = ({setMessage, classes, setRegistered}) => (
                         </Typography>
                         <FieldArray name="education">
                             {({push, remove}) => (
-                                <div>
+                                <Grid>
                                     {values.education.map((p, index) => {
                                         const instituteName = `education[${index}].instituteName`
                                         const startYear = `education[${index}].startYear`
                                         const endYear = `education[${index}].endYear`
 
                                         return (
-                                            <div key={p.key}>
-                                                <Field
-                                                    component={TextField}
-                                                    type="text"
-                                                    label="Institute Name"
-                                                    name={instituteName}
-                                                    autoComplete='off'
-                                                    variant="outlined"
-                                                    fullWidth
-                                                />
-                                                <Field
-                                                    component={TextField}
-                                                    type="number"
-                                                    label="Start Year"
-                                                    name={startYear}
-                                                    autoComplete='off'
-                                                />
-                                                <Field
-                                                    component={TextField}
-                                                    type="number"
-                                                    label="End Year"
-                                                    name={endYear}
-                                                    autoComplete='off'
-                                                />
-
-                                                <Button
-                                                    type="button"
-                                                    color="secondary"
-                                                    variant="outlined"
-                                                    style={{marginTop: '5px'}}
-                                                    onClick={() => remove(index)}
-                                                >
-                                                    x
-                                                </Button>
-                                            </div>
+                                            <Grid container spacing={1} key={p.key}>
+                                                <Grid item xs={12}>
+                                                    <Field
+                                                        component={TextField}
+                                                        type="text"
+                                                        label="Institute Name"
+                                                        name={instituteName}
+                                                        autoComplete='off'
+                                                        variant="outlined"
+                                                        required
+                                                        fullWidth
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={5}>
+                                                    <Field
+                                                        component={TextField}
+                                                        type="number"
+                                                        label="Start Year"
+                                                        name={startYear}
+                                                        autoComplete='off'
+                                                        variant="outlined"
+                                                        required
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={5}>
+                                                    <Field
+                                                        component={TextField}
+                                                        type="number"
+                                                        label="End Year"
+                                                        name={endYear}
+                                                        autoComplete='off'
+                                                        variant="outlined"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={2} sm={2}>
+                                                    <Button
+                                                        type="button"
+                                                        color="secondary"
+                                                        variant="outlined"
+                                                        onClick={() => remove(index)}
+                                                    >
+                                                        x
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
                                         )
                                     })}
+                                    <Grid item xs={5} style={{marginTop: '20px'}}>
                                     <Button
                                         type="button"
                                         variant="outlined"
                                         onClick={() =>
                                             push({key: Math.random(), instituteName: '', startYear: '', endYear: ''})
                                         }
-                                        style={{marginTop: '15px'}}
                                     >
                                         Add Education
                                     </Button>
-                                </div>
+                                    </Grid>
+                                </Grid>
                             )}
                         </FieldArray>
                     </Grid>
@@ -269,22 +279,22 @@ const ApplicantForm = () => {
     const classes = useStyles()
 
     if (registered) {
-        return <Redirect to="/login" />
+        return <Redirect to="/login"/>
     }
 
     return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
+        <Container component="main" maxWidth="sm">
+            <CssBaseline/>
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
+                    <LockOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h4">
                     Sign up
                 </Typography>
 
                 {message && <Alert severity="error">{message}</Alert>}
-                <App setMessage={setMessage} classes={classes} setRegistered={setRegistered} />
+                <App setMessage={setMessage} classes={classes} setRegistered={setRegistered}/>
             </div>
         </Container>
     )

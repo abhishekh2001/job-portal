@@ -9,6 +9,7 @@ import {AuthContext} from './context/auth'
 import PrivateRoute from './components/routes/auth/PrivateRoute'
 import {useState} from 'react'
 import Admin from './components/routes/Admin'
+import Dashboard from './components/Test'
 
 const App = () => {
     const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
@@ -38,6 +39,9 @@ const App = () => {
                     <Route path='/dashboard' component={Home}/>
 
                     <Route path='/admin' component={Admin} />
+
+
+                    <Route path='/Test' component={Dashboard} />
                 </div>
             </BrowserRouter>
         </AuthContext.Provider>
