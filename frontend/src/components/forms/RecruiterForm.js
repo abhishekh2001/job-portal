@@ -208,6 +208,7 @@ const RecruiterForm = () => {
                 </Typography>
 
                 {message && <Alert severity="error">{message}</Alert>}
+
                 <App setMessage={setMessage} classes={classes} setRegistered={setRegistered} />
             </div>
         </Container>

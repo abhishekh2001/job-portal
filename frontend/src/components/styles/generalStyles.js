@@ -1,16 +1,11 @@
-import {useAuth} from '../../context/auth'
-import Button from '@material-ui/core/Button'
-import {Redirect} from 'react-router-dom'
-import React, {useState} from 'react'
-import AppToolBar from '../AppToolBar'
-import {makeStyles} from '@material-ui/core'
-import Grid from '@material-ui/core/Grid'
+import {makeStyles} from '@material-ui/core/styles'
 
-const drawerWidth = 240;
+const drawerWidth = 240
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
+        flexGrow: 1
     },
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
@@ -70,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
         height: '100vh',
-        overflow: 'auto',
+        overflow: 'auto'
     },
     container: {
         paddingTop: theme.spacing(4),
@@ -85,37 +80,6 @@ const useStyles = makeStyles((theme) => ({
     fixedHeight: {
         height: 240,
     },
-}));
+}))
 
-function Admin() {
-    const [loggedIn, setLoggedIn] = useState(true)
-    const { setAuthTokens } = useAuth()
-
-    const classes = useStyles()
-
-    function logOut() {
-        setAuthTokens(null)
-        localStorage.removeItem('tokens')
-        setLoggedIn(false)
-    }
-
-    if (!loggedIn) {
-        return <Redirect to='/login'/>
-    }
-
-    return (
-        <div>
-            <AppToolBar classes={classes}>
-                <div className={classes.appBarSpacer}/>
-                <Grid container justify="center" spacing={3}>
-                    <Grid align='center'>
-                        <div>Admin Page</div>
-                        <Button size="large" color="secondary" onClick={logOut}>Log out</Button>
-                    </Grid>
-                </Grid>
-            </AppToolBar>
-        </div>
-    )
-}
-
-export default Admin
+export default useStyles
