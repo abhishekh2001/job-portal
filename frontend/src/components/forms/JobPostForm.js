@@ -261,7 +261,7 @@ const JobPostForm = () => {
     }
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="sm">
             <div className={classes.paper}>
                 <Typography component="h1" variant="h5">
                     Create a job

@@ -4,6 +4,7 @@ import {Redirect} from 'react-router-dom'
 import {useState} from 'react'
 import AppToolBar from '../AppToolBar'
 import {makeStyles} from '@material-ui/core'
+import Grid from '@material-ui/core/Grid'
 
 const drawerWidth = 240;
 
@@ -104,9 +105,14 @@ function Admin() {
 
     return (
         <div>
-            <AppToolBar classes={classes} />
-            <div>Admin Page</div>
-            <Button size="large" color="secondary" onClick={logOut}>Log out</Button>
+            <AppToolBar classes={classes}>
+                <Grid container justify="center" spacing={3}>
+                    <Grid align='center'>
+                        <div>Admin Page</div>
+                        <Button size="large" color="secondary" onClick={logOut}>Log out</Button>
+                    </Grid>
+                </Grid>
+            </AppToolBar>
         </div>
     )
 }
