@@ -5,6 +5,7 @@ import ApplicantRegister from './components/routes/auth/ApplicantRegister'
 import RecruiterRegister from './components/routes/auth/RecruiterRegister'
 import Login from './components/routes/auth/Login'
 import JobPostDashboard from './components/routes/recruiters/JobPostDashboard'
+import JobListDashboard from './components/routes/recruiters/JobListDashboard'
 import {AuthContext} from './context/auth'
 import PrivateRoute from './components/routes/auth/PrivateRoute'
 import {useState} from 'react'
@@ -17,35 +18,39 @@ const App = () => {
     const [authTokens, setAuthTokens] = useState(existingTokens)
 
     const setTokens = (data) => {
-        localStorage.setItem("tokens", JSON.stringify(data));
+        localStorage.setItem('tokens', JSON.stringify(data))
         setAuthTokens(data)
     }
 
     return (
-        <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+        <AuthContext.Provider value={{authTokens, setAuthTokens: setTokens}}>
             <AppToolBar>
-            <BrowserRouter>
-                <div>
-                    <br/>
-                    <Route path='/' exact component={Home}/>
-                    <Route path='/register' component={Register}/>
-                    <Route path='/applicantRegister' component={ApplicantRegister}/>
-                    <Route path='/recruiterRegister' component={RecruiterRegister}/>
-                    <Route path='/login' component={Login}/>
+                <BrowserRouter>
+                    <div>
+                        <br/>
+                        <Route path='/' exact component={Home}/>
+                        <Route path='/register' component={Register}/>
+                        <Route path='/applicantRegister' component={ApplicantRegister}/>
+                        <Route path='/recruiterRegister' component={RecruiterRegister}/>
+                        <Route path='/login' component={Login}/>
 
-                    <PrivateRoute path='/jobPostDashboard'
-                                  type='recruiter'
-                                  component={JobPostDashboard}
-                    />
+                        <PrivateRoute path='/jobPostDashboard'
+                                      type='recruiter'
+                                      component={JobPostDashboard}
+                        />
+                        <PrivateRoute path='/jobListDashboard'
+                                      type='recruiter'
+                                      component={JobListDashboard}
+                        />
 
-                    <Route path='/dashboard' component={Home}/>
+                        <Route path='/dashboard' component={Home}/>
 
-                    <Route path='/admin' component={Admin} />
+                        <Route path='/admin' component={Admin}/>
 
 
-                    <Route path='/Test' component={Dashboard} />
-                </div>
-            </BrowserRouter>
+                        <Route path='/Test' component={Dashboard}/>
+                    </div>
+                </BrowserRouter>
             </AppToolBar>
         </AuthContext.Provider>
     )
