@@ -54,7 +54,7 @@ const JobListDashboard = () => {
             <div className={classes.appBarSpacer} />
             <Grid container spacing={2}>
                 {jobs.map(job => (
-                    <Grid item xs={12} md={12} sm={4} key={job._id}>
+                    <Grid item xs={12} sm={4} key={job._id}>
                         <JobCard job={job} setOpenPopup={setOpenPopup} deleteJob={() => deleteJob(job._id)} />
 
                         <JobEditPopup
