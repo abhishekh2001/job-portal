@@ -12,11 +12,13 @@ const jobSchema = new mongoose.Schema({
     },
     maxApplications: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'must be positive']
     },
     maxPositions: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'must be positive']
     },
     dateOfPosting: {  // Set default to current date value?
         type: Date,

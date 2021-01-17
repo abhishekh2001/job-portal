@@ -101,8 +101,12 @@ router.get('/:id', async (req, res, next) => {
                 model: 'User'
             }
         })
+
         if (job) {
-            res.json(job)
+            const currApplicants = await Application.countDocuments({job: job._id})
+            const currPositions = await Application.countDocuments({job: job._id, status: 'accepted'})
+
+            res.json({...job.toJSON(), currPositions, currApplicants})
         } else {
             res.status(404).json({error: 'job not found'})
         }

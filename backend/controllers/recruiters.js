@@ -44,8 +44,17 @@ router.get('/list/jobs', middleware.auth, async (req, res, next) => {
     try {
         const recruiter = await Recruiter.findOne({user: user.id})
         const jobs = await Job
-            .find({recruiter: recruiter.id})
-        res.json(jobs)
+            .find({recruiter: recruiter._id})
+        console.log(jobs)
+        const returnData = []
+        for (let ind in jobs) {
+            const job = jobs[ind].toJSON()
+            const currApplicants = await Application.countDocuments({job: job._id})
+            const currPositions = await Application.countDocuments({job: job._id, status: 'accepted'})
+            console.log(job)
+            returnData.push({...job, currApplicants, currPositions})
+        }
+        res.json(returnData)
     } catch (err) {
         next(err)
     }
