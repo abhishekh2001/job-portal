@@ -38,9 +38,6 @@ const JobListDashboard = () => {
     return (
         <div>
             <div className={classes.appBarSpacer} />
-            <Button color='secondary' variant='contained'>
-                Click me!
-            </Button>
             <Grid container spacing={2}>
                 {jobs.map(job => (
                     <Grid item xs={12} sm={4} key={job._id}>

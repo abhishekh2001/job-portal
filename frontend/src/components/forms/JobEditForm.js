@@ -100,6 +100,7 @@ const App = ({classes, onSubmit, job}) => (
 
 const JobEditForm = ({job, handleOnUpdate, jobs, setOpenPopup}) => {
     const [message, setMessage] = useState(null)
+    const [error, setError] = useState(true)
     const classes = useStyles()
 
     const {authTokens} = useAuth()
@@ -112,8 +113,14 @@ const JobEditForm = ({job, handleOnUpdate, jobs, setOpenPopup}) => {
             const result = await jobService.updateOne(job._id, body, authTokens.token)
             setMessage(null)
             console.log('result', result)
-            setSubmitting(false)
 
+            setError(false)
+            setMessage('Updated')
+            await new Promise((resolve)=>setTimeout(() => {
+                resolve();
+            }, 1000))
+
+            setSubmitting(false)
             handleOnUpdate()
             setOpenPopup(false)
         } catch (err) {
@@ -126,10 +133,14 @@ const JobEditForm = ({job, handleOnUpdate, jobs, setOpenPopup}) => {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
-            <div>
-                {message && <Alert severity="error">{message}</Alert>}
+            <Grid>
+                {message &&
+                    <Alert
+                        style={{marginBottom: '15px'}}
+                        severity={error ? "error" : "success"}
+                    >{message}</Alert>}
                 <App job={job} classes={classes} onSubmit={updateJob}/>
-            </div>
+            </Grid>
         </Container>
     )
 }
