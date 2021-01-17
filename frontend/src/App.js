@@ -6,6 +6,7 @@ import RecruiterRegister from './components/routes/auth/RecruiterRegister'
 import Login from './components/routes/auth/Login'
 import JobPostDashboard from './components/routes/recruiters/JobPostDashboard'
 import JobListDashboard from './components/routes/recruiters/JobListDashboard'
+import ApplicantJobListDashboard from './components/routes/applicants/JobListDashboard'
 import {AuthContext} from './context/auth'
 import PrivateRoute from './components/routes/auth/PrivateRoute'
 import {useState} from 'react'
@@ -41,6 +42,11 @@ const App = () => {
                         <PrivateRoute path='/jobListDashboard'
                                       type='recruiter'
                                       component={JobListDashboard}
+                        />
+
+                        <PrivateRoute path='/browseJobs'
+                                      type='applicant'
+                                      component={ApplicantJobListDashboard}
                         />
 
                         <Route path='/dashboard' component={Home}/>

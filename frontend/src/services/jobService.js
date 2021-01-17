@@ -2,6 +2,11 @@ import axios from 'axios'
 
 const baseUrl = '/api/jobs'
 
+const getAll = async () => {
+    const response = await axios.get(`${baseUrl}`)
+    return response.data
+}
+
 const postOne = async (data, token) => {
     const config = {
         headers: { Authorization: `Bearer ${token}` }
@@ -38,7 +43,8 @@ const jobService = {
     postOne,
     updateOne,
     getOne,
-    deleteOne
+    deleteOne,
+    getAll
 }
 
 export default jobService
