@@ -28,11 +28,20 @@ const JobListDashboard = () => {
         }
 
         getRecruiterJobs()
-    }, [])
+    }, [authTokens.token])
 
     const getUpdatedJob = async (id) => {
         const job = await jobService.getOne(id)
         setJobs(jobs.map(j => j._id.toString() === id ? job : j))
+    }
+
+    const deleteJob = async (id) => {
+        try {
+            await jobService.deleteOne(id, authTokens.token)
+            setJobs(jobs.filter(j => j._id !== id))
+        } catch (err) {
+            console.log('caught err', err)
+        }
     }
 
     return (
@@ -40,8 +49,8 @@ const JobListDashboard = () => {
             <div className={classes.appBarSpacer} />
             <Grid container spacing={2}>
                 {jobs.map(job => (
-                    <Grid item xs={12} sm={4} key={job._id}>
-                        <JobCard job={job} setOpenPopup={setOpenPopup} />
+                    <Grid item xs={12} md={12} sm={4} key={job._id}>
+                        <JobCard job={job} setOpenPopup={setOpenPopup} deleteJob={() => deleteJob(job._id)} />
 
                         <JobEditPopup
                             openPopup={openPopup}

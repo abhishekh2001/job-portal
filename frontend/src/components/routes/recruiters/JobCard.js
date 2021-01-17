@@ -17,7 +17,7 @@ const useStyles = makeStyles({
     },
 });
 
-const JobCard = ({job, setOpenPopup}) => {
+const JobCard = ({job, setOpenPopup, deleteJob}) => {
     const classes = useStyles();
 
     return (
@@ -38,7 +38,7 @@ const JobCard = ({job, setOpenPopup}) => {
                 <Button size="small" color="primary" onClick={() => setOpenPopup(true)}>
                     Edit
                 </Button>
-                <Button size="small" color="secondary">
+                <Button size="small" color="secondary" onClick={deleteJob}>
                     Delete
                 </Button>
             </CardActions>

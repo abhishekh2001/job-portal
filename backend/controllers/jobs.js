@@ -144,7 +144,9 @@ router.delete('/:id', middleware.auth, async (req, res, next) => {
         if (!recruiter || job.recruiter.toString() !== recruiter._id.toString()) {
             return next({name: 'AuthorizationError', message: 'user does not have permissions'})
         }
-        await Job.findByIdAndDelete(id)
+        const deletedJob = await Job.findByIdAndDelete(id)
+        const removedApps = await Application.deleteMany({job: deletedJob._id})
+        console.log('deleted, removed', deletedJob, removedApps)
         res.status(204).end()
     } catch (err) {
         next(err)

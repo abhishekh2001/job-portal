@@ -26,10 +26,19 @@ const getOne = async(id) => {
     return response.data
 }
 
+const deleteOne = async (id, token) => {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+    const response = await axios.delete(`${baseUrl}/${id}`, config)
+    return response
+}
+
 const jobService = {
     postOne,
     updateOne,
-    getOne
+    getOne,
+    deleteOne
 }
 
 export default jobService
