@@ -16,12 +16,16 @@ const JobListDashboard = () => {
     const [jobs, setJobs] = useState([])
     const [openPopup, setOpenPopup] = useState(false)
 
+    const getActiveJobs = jobs => {
+        return jobs.filter(j => j.positionStatus === 'free')
+    }
+
     useEffect(() => {
         const getRecruiterJobs = async () => {
             try {
                 const response = await recruiterService.getRecruiterJobs(authTokens.token)
                 console.log('response jobs', response)
-                setJobs(response)
+                setJobs(getActiveJobs(response))
             } catch (err) {
                 console.log('err', err.response)
             }
@@ -32,7 +36,8 @@ const JobListDashboard = () => {
 
     const getUpdatedJob = async (id) => {
         const job = await jobService.getOne(id)
-        setJobs(jobs.map(j => j._id.toString() === id ? job : j))
+        const updatedJobs = jobs.map(j => j._id.toString() === id ? job : j)
+        setJobs(getActiveJobs(updatedJobs))
     }
 
     const deleteJob = async (id) => {

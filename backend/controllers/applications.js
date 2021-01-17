@@ -66,6 +66,14 @@ router.post('/applicant/:jobId', middleware.auth, async (req, res, next) => {
                 message: 'user has 10 open applications'
             })
 
+        const accepted = await Application
+            .countDocuments({applicant: applicant._id, status: 'accepted'})
+        if (accepted)
+            return next({
+                name: 'BadRequestError',
+                message: 'User has already been accepted for another job'
+            })
+
         const prevApplied = await Application.findOne({applicant: applicant._id, job: job._id})
         if (prevApplied)
             return next({name: 'BadRequestError', message: 'user has already applied to this job'})
@@ -116,7 +124,10 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
             return next({name: 'AuthorizationError', message: 'user is not authorized to perform this operation'})
 
         if (application.job.recruiter._id.toString() !== recruiter._id.toString())
-            return next({name: 'AuthorizationError', message: 'user is not authorized to perform this operation (did not create job)'})
+            return next({
+                name: 'AuthorizationError',
+                message: 'user is not authorized to perform this operation (did not create job)'
+            })
         if (application.job.positionStatus === 'full')
             return next({name: 'BadRequestError', message: 'maximum positions limit has been met for this job'})
 
@@ -138,7 +149,7 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
         }
 
         console.log('updating...')
-        const upd = await Application.findByIdAndUpdate(appId, uApp)
+        const upd = await Application.findByIdAndUpdate(appId, uApp, {new: true})
         console.log('updated', upd)
         const positionsCount = await Application.countDocuments({job: application.job._id, status: 'accepted'})
         console.log('here', positionsCount, application.job.maxPositions, positionsCount >= application.job.maxPositions)
@@ -150,6 +161,14 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
             console.log('udpated', upd)
         }
 
+        // Reject all other applications made by that applicant
+        if (upd.status === 'accepted') {
+            const rej = await Application
+                .updateMany(
+                    {applicant: upd.applicant, _id: {$not: {$eq: upd._id}}},
+                    {$set: {status: 'rejected'}})
+            console.log('rejected', rej)
+        }
 
         const updatedApp = await Application.findById(appId).populate('job').populate({
             path: 'applicant',
