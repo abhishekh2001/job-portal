@@ -166,9 +166,15 @@ const ApplicantJobListDashboard = () => {
         {id: 'salaryPerMonth', name: 'Salary', sortable: true},
         {id: 'duration', name: 'Duration', sortable: true},
         {id: 'deadline', name: 'Deadline', sortable: false},
-        {id: 'type', name: 'Type', sortable: false}
+        {id: 'type', name: 'Type', sortable: false},
+        {id: 'apply', name: 'Apply', sortable: false}
     ]
-    const filter = {
+    const {
+        SortableTable,
+        recordsAfterSorting
+    } = CustomTable(jobs, headers, filterFn)
+
+    const filter = {  // TODO: Apply a form "reset"
         title: '',
         typeOfJob: '',
         minSalary: '',
@@ -188,7 +194,7 @@ const ApplicantJobListDashboard = () => {
         (async () => {
             const response = await jobService.getAll()
             console.log('response', response)
-            setJobs(filterFn.fn(getActiveJobs(response)))
+            setJobs(getActiveJobs(response))
         })()
     }, [filterFn])
 
@@ -199,22 +205,25 @@ const ApplicantJobListDashboard = () => {
     return (
         <div>
             <div className={classes.appBarSpacer}/>
+            <Typography variant="h3" component="h5">
+                Browse Jobs
+            </Typography>
             <Grid>
                 <Paper style={{padding: '40px', marginBottom: '40px'}}>
-                    <Typography variant="h2" component="h5">
+                    <Typography variant="h4" component="h5">
                         Filter
                     </Typography>
                     <FilterForm filter={filter} setFilterFn={setFilterFn} classes={classes}/>
                 </Paper>
                 <Paper>
-                    <CustomTable
+                    <SortableTable
                         records={jobs}
                         headCells={headers}
                         filterFn={filterFn}
                         setData={setJobs}
                     >
                         <TableBody>
-                            {jobs.map(item => (
+                            {recordsAfterSorting().map(item => (
                                 <TableRow key={item._id}>
                                     <TableCell>{item.title}</TableCell>
                                     <TableCell>{item.recruiter.user.name}</TableCell>
@@ -223,10 +232,15 @@ const ApplicantJobListDashboard = () => {
                                     <TableCell>{item.duration}</TableCell>
                                     <TableCell>{item.deadline}</TableCell>
                                     <TableCell>{item.typeOfJob}</TableCell>
+                                    <TableCell>
+                                        <Button variant='outlined'>
+                                            Apply
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
-                    </CustomTable>
+                    </SortableTable>
                 </Paper>
             </Grid>
         </div>

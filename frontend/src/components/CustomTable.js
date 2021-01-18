@@ -1,13 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Table, TableHead, TableRow, TableCell, makeStyles, TableSortLabel} from '@material-ui/core'
 
-const CustomTable = ({
-                         records,
-                         headCells,
-                         filterFn,
-                         setData,
-                         children
-                     }) => {
+export default function CustomTable(records, headCells, filterFn) {
     const [order, setOrder] = useState()
     const [orderBy, setOrderBy] = useState()
 
@@ -50,10 +44,11 @@ const CustomTable = ({
     }
 
     const recordsAfterSorting = () => {
-        setData(stableSort(filterFn.fn(records), getComparator(order, orderBy)))
+        console.log('sorted', stableSort(filterFn.fn(records), getComparator(order, orderBy)))
+        return stableSort(filterFn.fn(records), getComparator(order, orderBy))
     }
 
-    return (
+    const SortableTable = ({children}) => (
         <Table>
             <TableHead>
                 <TableRow>
@@ -77,6 +72,9 @@ const CustomTable = ({
             {children}
         </Table>
     )
-}
 
-export default CustomTable
+    return {
+        SortableTable,
+        recordsAfterSorting
+    }
+}
