@@ -38,8 +38,18 @@ const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
             onSubmit={(values, {setSubmitting}) => {
                 setFilterFn({
                     fn: (items) => {
-                        // TODO: write filter function
-                        items.filter(item => item)
+                        let returnArr = items
+                        if (values.title !== '')
+                            returnArr = returnArr.filter(item => item.title.toLowerCase().includes(values.title.toLowerCase()))
+                        if (values.typeOfJob !== '')
+                            returnArr = returnArr.filter(item => item.typeOfJob === values.typeOfJob)
+                        if (values.minSalary !== '')
+                            returnArr = returnArr.filter(item => item.salaryPerMonth > values.minSalary)
+                        if (values.maxSalary !== '')
+                            returnArr = returnArr.filter(item => item.salaryPerMonth < values.maxSalary)
+                        if (values.duration !== '')
+                            returnArr = returnArr.filter(item => item.duration < values.duration)
+                        return returnArr
                     }
                 })
 
@@ -148,7 +158,7 @@ const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
 const ApplicantJobListDashboard = () => {
     const classes = useStyles()
     const [jobs, setJobs] = useState([])
-    const filterFn = {fn: (items) => items}
+    const [filterFn, setFilterFn] = useState({fn: (items) => items})
     const headers = [
         {id: 'title', name: 'Title', sortable: false},
         {id: 'recName', name: 'Rec. Name', sortable: false},
@@ -166,6 +176,10 @@ const ApplicantJobListDashboard = () => {
         duration: ''
     }
 
+    useEffect(() => {
+        console.log('filterfn', filterFn)
+    }, [filterFn])
+
     const getActiveJobs = (jobs) => {
         return jobs.filter(job => new Date(job.deadline) > new Date())
     }
@@ -174,9 +188,9 @@ const ApplicantJobListDashboard = () => {
         (async () => {
             const response = await jobService.getAll()
             console.log('response', response)
-            setJobs(getActiveJobs(response))
+            setJobs(filterFn.fn(getActiveJobs(response)))
         })()
-    }, [])
+    }, [filterFn])
 
     useEffect(() => {
         console.log('jobs', jobs)
@@ -186,8 +200,11 @@ const ApplicantJobListDashboard = () => {
         <div>
             <div className={classes.appBarSpacer}/>
             <Grid>
-                <Paper>
-                    <FilterForm filter={filter} classes={classes}/>
+                <Paper style={{padding: '40px', marginBottom: '40px'}}>
+                    <Typography variant="h2" component="h5">
+                        Filter
+                    </Typography>
+                    <FilterForm filter={filter} setFilterFn={setFilterFn} classes={classes}/>
                 </Paper>
                 <Paper>
                     <CustomTable
