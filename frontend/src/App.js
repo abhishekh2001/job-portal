@@ -13,6 +13,7 @@ import {useState} from 'react'
 import Admin from './components/routes/Admin'
 import Dashboard from './components/Test'
 import AppToolBar from './components/AppToolBar'
+import ApplyToJob from './components/routes/applicants/Apply'
 
 const App = () => {
     const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
@@ -47,6 +48,10 @@ const App = () => {
                         <PrivateRoute path='/browseJobs'
                                       type='applicant'
                                       component={ApplicantJobListDashboard}
+                        />
+                        <PrivateRoute path='/apply/:jobId'
+                                      type='applicant'
+                                      component={ApplyToJob}
                         />
 
                         <Route path='/dashboard' component={Home}/>

@@ -27,6 +27,7 @@ import authService from '../../../services/authService'
 import applicantServices from '../../../services/applicantServices'
 import {lightGreen} from '@material-ui/core/colors'
 import {useAuth} from '../../../context/auth'
+import {Link} from 'react-router-dom'
 
 const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
     return (
@@ -261,11 +262,13 @@ const ApplicantJobListDashboard = () => {
                                     <TableCell>{item.deadline}</TableCell>
                                     <TableCell>{item.typeOfJob}</TableCell>
                                     <TableCell>
-                                        {console.log(item._id.toString(), jobsAppliedTo)}
                                         {jobsAppliedTo.indexOf(item._id)>=0 ?
                                             <Button disabled>Applied</Button>
                                             :
-                                            <Button variant='outlined'>
+                                            <Button
+                                                variant='outlined'
+                                                href={`/apply/${item._id}`}
+                                            >
                                                 Apply
                                             </Button>
                                         }
