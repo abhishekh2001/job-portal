@@ -4,7 +4,7 @@ import jobService from '../../../services/jobService'
 import Grid from '@material-ui/core/Grid'
 import useStyles from '../../styles/generalStyles'
 import {
-    Button,
+    Button, ButtonGroup,
     LinearProgress, MenuItem,
     Paper,
     Table,
@@ -24,6 +24,9 @@ import {DateTimePicker} from 'formik-material-ui-pickers'
 import {typeOfJobsArray} from '../../utils/typeOfJob'
 import {durationArray} from '../../utils/duration'
 import authService from '../../../services/authService'
+import applicantServices from '../../../services/applicantServices'
+import {lightGreen} from '@material-ui/core/colors'
+import {useAuth} from '../../../context/auth'
 
 const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
     return (
@@ -138,16 +141,27 @@ const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
                             {isSubmitting && <LinearProgress/>}
                         </Grid>
 
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            type="submit"
-                            disabled={isSubmitting}
-                            className={classes.submit}
-                        >
-                            Filter
-                        </Button>
+                        <ButtonGroup fullWidth style={{marginTop: '30px'}}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                type="submit"
+                                disabled={isSubmitting}
+                                className={classes.submit}
+                            >
+                                Filter
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                fullWidth
+                                type='reset'
+                                disabled={isSubmitting}
+                            >
+                                Reset
+                            </Button>
+                        </ButtonGroup>
                     </Form>
                 </MuiPickersUtilsProvider>
             )}
@@ -157,7 +171,9 @@ const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
 
 const ApplicantJobListDashboard = () => {
     const classes = useStyles()
+    const { authTokens } = useAuth()
     const [jobs, setJobs] = useState([])
+    const [jobsAppliedTo, setJobsAppliedTo] = useState([])
     const [filterFn, setFilterFn] = useState({fn: (items) => items})
     const headers = [
         {id: 'title', name: 'Title', sortable: false},
@@ -181,6 +197,18 @@ const ApplicantJobListDashboard = () => {
         maxSalary: '',
         duration: ''
     }
+
+    useEffect(() => {
+        ( async() => {
+            try {
+                console.log('token', authTokens.token)
+                const response = await applicantServices.getJobsAppliedTo(authTokens.token)
+                setJobsAppliedTo(response)
+            } catch (err) {
+                console.log('error while getting jobs applied', err)
+            }
+        })()
+    }, [])
 
     useEffect(() => {
         console.log('filterfn', filterFn)
@@ -233,9 +261,14 @@ const ApplicantJobListDashboard = () => {
                                     <TableCell>{item.deadline}</TableCell>
                                     <TableCell>{item.typeOfJob}</TableCell>
                                     <TableCell>
-                                        <Button variant='outlined'>
-                                            Apply
-                                        </Button>
+                                        {console.log(item._id.toString(), jobsAppliedTo)}
+                                        {jobsAppliedTo.indexOf(item._id)>=0 ?
+                                            <Button disabled>Applied</Button>
+                                            :
+                                            <Button variant='outlined'>
+                                                Apply
+                                            </Button>
+                                        }
                                     </TableCell>
                                 </TableRow>
                             ))}
