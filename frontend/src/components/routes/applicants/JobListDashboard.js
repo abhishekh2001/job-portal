@@ -10,12 +10,13 @@ const ApplicantJobListDashboard = () => {
     const classes = useStyles()
     const [jobs, setJobs] = useState([])
     const headers = [
-        {name: 'Title', sortable: false},
-        {name: 'Rec. Name', sortable: false},
+        {id: 'title', name: 'Title', sortable: false},
+        {id: '', name: 'Rec. Name', sortable: false},
         {name: 'Job Rating', sortable: true},
         {name: 'Salary', sortable: true},
         {name: 'Duration', sortable: true},
-        {name: 'Deadline', sortable: false}
+        {name: 'Deadline', sortable: false},
+        {name: 'Type', sortable: false}
     ]
 
     const getActiveJobs = (jobs) => {
@@ -25,6 +26,7 @@ const ApplicantJobListDashboard = () => {
     useEffect(() => {
         (async () => {
             const response = await jobService.getAll()
+            console.log('response', response)
             setJobs(getActiveJobs(response))
         })()
     }, [])
@@ -32,8 +34,7 @@ const ApplicantJobListDashboard = () => {
     return (
         <div>
             <div className={classes.appBarSpacer}/>
-            <Paper className={classes.pageContent}>
-                {/* <EmployeeForm /> */}
+            <Paper>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
@@ -43,14 +44,17 @@ const ApplicantJobListDashboard = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {jobs.map(item =>
-                            (<TableRow key={item.id}>
-                                <TableCell>{item.fullName}</TableCell>
-                                <TableCell>{item.email}</TableCell>
-                                <TableCell>{item.mobile}</TableCell>
-                                <TableCell>{item.department}</TableCell>
-                            </TableRow>)
-                        )}
+                        {jobs.map(item => (
+                            <TableRow key={item._id}>
+                                <TableCell>{item.title}</TableCell>
+                                <TableCell>{item.recruiter.user.name}</TableCell>
+                                <TableCell>{item.rating}</TableCell>
+                                <TableCell>{item.salaryPerMonth}</TableCell>
+                                <TableCell>{item.duration}</TableCell>
+                                <TableCell>{item.deadline}</TableCell>
+                                <TableCell>{item.typeOfJob}</TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </Paper>

@@ -59,10 +59,11 @@ const jobSchema = new mongoose.Schema({
         required: true,
         min: [0, 'salary must be positive']
     },
-    Rating: {
+    rating: {
         type: Number,
         min: 0,
-        max: 5
+        max: 5,
+        default: 0
     }
 })
 

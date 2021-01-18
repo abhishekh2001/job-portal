@@ -1,65 +1,41 @@
 import React, {useState} from 'react'
 import {Table, TableHead, TableRow, TableCell, makeStyles, TableSortLabel} from '@material-ui/core'
 
-const useStyles = makeStyles(theme => ({
-    table: {
-        marginTop: theme.spacing(3),
-        '& thead th': {
-            fontWeight: '600',
-            color: theme.palette.primary.main,
-            backgroundColor: theme.palette.primary.light,
-        },
-        '& tbody td': {
-            fontWeight: '300',
-        },
-        '& tbody tr:hover': {
-            backgroundColor: '#fffbf2',
-            cursor: 'pointer',
-        },
-    },
-}))
-
 export default function useTable(records, headCells, filterFn) {
-    const classes = useStyles()
-
     const [order, setOrder] = useState()
     const [orderBy, setOrderBy] = useState()
 
-    const TblContainer = props => (
-        <Table className={classes.table}>
-            {props.children}
-        </Table>
-    )
+    const CustomTable = props => {
 
-    const TblHead = props => {
-
-        const handleSortRequest = cellId => {
+        const handleSortRequest = (cellId) => {
             const isAsc = orderBy === cellId && order === 'asc'
             setOrder(isAsc ? 'desc' : 'asc')
             setOrderBy(cellId)
         }
 
         return (
-            <TableHead>
-                <TableRow>
-                    {
-                        headCells.map(headCell => (
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        {headCells.map(headCell => (
                             <TableCell key={headCell.id}
                                        sortDirection={orderBy === headCell.id ? order : false}>
-                                {headCell.disableSorting ? headCell.label :
+                                {!headCell.sortable ? headCell.name :
                                     <TableSortLabel
                                         active={orderBy === headCell.id}
                                         direction={orderBy === headCell.id ? order : 'asc'}
-                                        onClick={() => {
-                                            handleSortRequest(headCell.id)
-                                        }}>
-                                        {headCell.label}
+                                        onClick={() => handleSortRequest(headCell.id)}
+                                    >
+                                        {headCell.name}
                                     </TableSortLabel>
                                 }
-                            </TableCell>))
-                    }
-                </TableRow>
-            </TableHead>
+                            </TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+
+                {props.children}
+            </Table>
         )
     }
 
@@ -94,8 +70,6 @@ export default function useTable(records, headCells, filterFn) {
     }
 
     return {
-        TblContainer,
-        TblHead,
         recordsAfterSorting
     }
 }
