@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Grid from '@material-ui/core/Grid'
 import useStyles from '../../styles/generalStyles'
 import {
-    Button, Paper,
+    Button, Dialog, DialogContent, DialogTitle, LinearProgress, MenuItem, Paper,
     TableBody, TableCell, TableRow,
     Typography
 } from '@material-ui/core'
@@ -10,11 +10,87 @@ import applicantServices from '../../../services/applicantServices'
 import {useAuth} from '../../../context/auth'
 import CustomTable from '../../CustomTable'
 import format from 'date-fns/format'
+import {Field, Form, Formik} from 'formik'
+import {TextField} from 'formik-material-ui'
+import * as yup from 'yup'
+import applicationService from '../../../services/applicationService'
+import {Alert, Rating} from '@material-ui/lab'
+
+const validationSchema = yup.object({
+    value: yup
+        .number('enter rating')
+        .required()
+        .integer('Should be an integer')
+})
+
+const RatePopup = (props) => {
+    const {title, children, openPopup, setOpenPopup} = props
+
+    return (
+        <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
+            <DialogContent dividers>
+                {children}
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+
+const App = ({onSubmit}) => (
+    <Formik
+        initialValues={{
+            value: 0
+        }}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+    >
+        {({submitForm, isSubmitting, touched, errors}) => (
+            <Form>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Field
+                            component={TextField}
+                            type="number"
+                            label="Rating"
+                            name="value"
+                            select
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        >
+                            {[0, 1, 2, 3, 4, 5].map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </Field>
+                    </Grid>
+                    {isSubmitting && <LinearProgress/>}
+                </Grid>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    type="submit"
+                    disabled={isSubmitting}
+                >
+                    Submit
+                </Button>
+            </Form>
+        )}
+    </Formik>
+)
 
 const MyApplications = () => {
     const classes = useStyles()
     const {authTokens} = useAuth()
     const [myApplications, setMyApplications] = useState([])
+    const [message, setMessage] = useState(null)
+    const [openPopup, setOpenPopup] = useState(false)
     const filterFn = {
         fn: (items) => items
     }
@@ -43,6 +119,18 @@ const MyApplications = () => {
             }
         })()
     }, [])
+
+
+    const setRatings = (appId) => async (values, {setSubmitting}) => {
+        try {
+            const response = await applicationService.rateJob(appId, values, authTokens.token)
+            console.log('response', response)
+            setOpenPopup(false)
+        } catch (err) {
+            setMessage(err.response.data.error)
+        }
+    }
+
 
     return (
         <div>
@@ -75,11 +163,25 @@ const MyApplications = () => {
                                     <TableCell>
                                         {
                                             item.status === 'accepted' ?
-                                                <Button variant='outlined'>
-                                                    Rate
-                                                </Button>
+                                                item.myRating === -1 ?
+                                                    (<div>
+                                                    <Button variant='outlined'
+                                                            onClick={() => setOpenPopup(true)}
+                                                    >
+                                                        Rate
+                                                    </Button>
+                                                    <RatePopup
+                                                        openPopup={openPopup}
+                                                        setOpenPopup={setOpenPopup}
+                                                    >
+                                                        {message && <Alert severity='error'>{message}</Alert>}
+                                                        <App onSubmit={setRatings(item._id)} />
+                                                    </RatePopup>
+                                                </div>)
+                                                    :
+                                                    (<Rating readOnly size='small' value={item.myRating}/>)
                                                 :
-                                                'Not accepted'
+                                                'Not Applicable'
                                         }
                                     </TableCell>
                                 </TableRow>

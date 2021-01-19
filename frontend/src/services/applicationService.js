@@ -11,8 +11,17 @@ const applyToJob = async (jobId, body, token) => {
     return response.data
 }
 
+const rateJob = async (appId, body, token) => {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+    const response = await axios.put(`${baseUrl}/rate/${appId}`, body, config)
+    return response.data
+}
+
 const applicationService = {
-    applyToJob
+    applyToJob,
+    rateJob
 }
 
 export default applicationService

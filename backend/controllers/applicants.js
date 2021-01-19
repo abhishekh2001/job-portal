@@ -96,7 +96,34 @@ router.get('/list/applications', middleware.auth, async (req, res, next) => {
                     }
                 }
             })
-        res.json(applications)
+        console.log('app', applications)
+        const toReturn = applications
+        for (let ind in toReturn) {
+            toReturn[ind] = {...applications[ind].toJSON()}
+            console.log('ind, el', ind, toReturn[ind])
+            toReturn[ind]['myRating'] = -1
+            const rating = toReturn[ind].job.ratings.find(el => el.applicant.toString() === applicant._id.toString())
+            console.log('myRating is', rating)
+            if (rating)
+                toReturn[ind]['myRating'] = rating.value
+        }
+        console.log('app toRet', toReturn[0].myRating)
+        res.json(toReturn)
+    } catch (err) {
+        next(err)
+    }
+})
+
+router.get('/rating/:jobId', middleware.auth, async (req, res, next) => {
+    const user = req.user
+    try {
+        const applicant = await Applicant.findOne({user: user.id})
+        if (!applicant)
+            return next({name: 'AuthorizationError', message: 'applicant not found'})
+        const ratingValue = await Job
+            .findById(req.params.jobId)
+            .select({ ratings: {$elemMatch: {applicant: applicant.id}} })
+        res.json(ratingValue)
     } catch (err) {
         next(err)
     }

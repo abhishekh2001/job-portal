@@ -18,9 +18,18 @@ const getApplications = async (token) => {
     return response.data
 }
 
+const getJobRating = async (jobId, token) => {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+    const response = await axios.get(`${baseUrl}/rating/${jobId}`, config)
+    return response.data
+}
+
 const applicantServices = {
     getJobsAppliedTo,
-    getApplications
+    getApplications,
+    getJobRating
 }
 
 export default applicantServices
