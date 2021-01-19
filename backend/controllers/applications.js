@@ -28,6 +28,41 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+router.put('/rate/:appId', middleware.auth, async (req, res, next) => {
+    const appId = req.params.appId
+    const user = req.user
+    const body = req.body
+
+    if (user.type !== 'applicant')
+        return next({name: 'AuthorizationError', message: 'user is not authorized to rate this job'})
+
+    try {
+        const application = await Application.findById(appId)
+        if (!application)
+            return next({name: 'BadRequestError', message: 'job is not available'})
+        if (application.status !== 'accepted')
+            return next({name: 'BadRequestError', message: 'Application not yet accepted'})
+        const job = await Job.findById(application.job)
+        const applicant = await Applicant.findOne({user: user.id})
+
+        if (!job)
+            return next({name: 'BadRequestError', message: 'job is not available'})
+        if (!applicant)
+            return next({name: 'AuthorizationError', message: 'user is not authorized to apply for this job'})
+        if (applicant._id.toString() !== application.applicant.toString())
+            return next({name: 'AuthorizationError', message: 'user is not authorized to apply for this job'})
+        if (job.ratings.map(r => r.applicant.toString()).indexOf(applicant._id.toString()) >= 0)
+            return next({name: 'BadRequestError', message: 'user has already rated'})
+
+        job.ratings.push({applicant: applicant._id, value: body.value})
+        const saved = await job.save()
+        console.log('saved as', saved)
+        res.json(saved)
+    } catch (err) {
+        return next(err)
+    }
+})
+
 // Applicant must be authorized
 // Only applicant can create new application
 router.post('/applicant/:jobId', middleware.auth, async (req, res, next) => {

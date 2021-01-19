@@ -64,7 +64,20 @@ const jobSchema = new mongoose.Schema({
         min: 0,
         max: 5,
         default: 0
-    }
+    },
+    ratings: [
+        {
+            applicant: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Applicant'
+            },
+            value: {
+                type: Number,
+                min: 0,
+                max: 5
+            }
+        }
+    ]
 })
 
 jobSchema.set('toJSON', {
