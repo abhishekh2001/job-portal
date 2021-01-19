@@ -45,8 +45,13 @@ const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
                 setFilterFn({
                     fn: (items) => {
                         let returnArr = items
-                        if (values.title !== '')
-                            returnArr = returnArr.filter(item => item.title.toLowerCase().includes(values.title.toLowerCase()))
+                        if (values.title !== '') {
+                            const fuse = new Fuse(returnArr, {
+                                keys: ['title']
+                            })
+                            console.log('search', fuse.search(values.title))
+                            returnArr = fuse.search(values.title).map(res => res.item)
+                        }
                         if (values.typeOfJob !== '')
                             returnArr = returnArr.filter(item => item.typeOfJob === values.typeOfJob)
                         if (values.minSalary !== '')
