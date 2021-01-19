@@ -7,12 +7,20 @@ const getJobsAppliedTo = async (token) => {
         headers: { Authorization: `Bearer ${token}` }
     }
     const response = await axios.get(`${baseUrl}/list/applications`, config)
-    console.log('response.data', response.data)
     return response.data.map(application => application.job._id)
 }
 
+const getApplications = async (token) => {
+    const config = {
+        headers :{ Authorization: `Bearer ${token}`}
+    }
+    const response = await axios.get(`${baseUrl}/list/applications`, config)
+    return response.data
+}
+
 const applicantServices = {
-    getJobsAppliedTo
+    getJobsAppliedTo,
+    getApplications
 }
 
 export default applicantServices

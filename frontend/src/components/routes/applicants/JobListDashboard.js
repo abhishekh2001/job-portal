@@ -198,7 +198,7 @@ const ApplicantJobListDashboard = () => {
         recordsAfterSorting
     } = CustomTable(jobs, headers, filterFn)
 
-    const filter = {  // TODO: Apply a form "reset"
+    const filter = {
         title: '',
         typeOfJob: '',
         minSalary: '',

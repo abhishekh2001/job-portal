@@ -11,6 +11,9 @@ const applicationSchema = new mongoose.Schema({
         ref: 'Job',
         required: true
     },
+    dateOfJoining: {
+        type: Date,
+    },
     applicant: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Applicant',

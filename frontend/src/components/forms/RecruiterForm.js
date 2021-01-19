@@ -140,6 +140,7 @@ const App = ({setMessage, classes, setRegistered}) => (
                             name="bio"
                             autoComplete='off'
                             variant="outlined"
+                            multiline
                             required
                             fullWidth
                         />

@@ -14,6 +14,7 @@ import Admin from './components/routes/Admin'
 import Dashboard from './components/Test'
 import AppToolBar from './components/AppToolBar'
 import ApplyToJob from './components/routes/applicants/Apply'
+import MyApplications from './components/routes/applicants/MyApplications'
 
 const App = () => {
     const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
@@ -52,6 +53,11 @@ const App = () => {
                         <PrivateRoute path='/apply/:jobId'
                                       type='applicant'
                                       component={ApplyToJob}
+                        />
+
+                        <PrivateRoute path='/myApplications'
+                                      type='applicant'
+                                      component={MyApplications}
                         />
 
                         <Route path='/dashboard' component={Home}/>

@@ -86,7 +86,15 @@ router.get('/list/applications', middleware.auth, async (req, res, next) => {
             .find({applicant: applicant._id})
             .populate({
                 path: 'job',
-                model: 'Job'
+                model: 'Job',
+                populate: {
+                    path: 'recruiter',
+                    model: 'Recruiter',
+                    populate: {
+                        path: 'user',
+                        model: 'User'
+                    }
+                }
             })
         res.json(applications)
     } catch (err) {

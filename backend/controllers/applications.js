@@ -134,12 +134,12 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
         if (!body.status)
             return next({name: 'BadRequestError', message: 'status field is required'})
 
-        // TODO: test maxApplications
         const uApp = application.toJSON()
         if (body.status === 'accepted') {
             if (application.status !== 'shortlisted')
                 return next({name: 'BadRequestError', message: 'application must be shortlisted first'})
             uApp.status = 'accepted'
+            uApp.dateOfJoining = new Date()
         } else if (body.status === 'rejected') {  // Prevent reject if application is accepted
             uApp.status = 'rejected'
         } else if (body.status === 'shortlisted') {
@@ -157,8 +157,12 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
         if (positionsCount >= application.job.maxPositions) {
             console.log('inside')
             const updatedJob = {...application.job.toJSON(), positionStatus: 'full'}
-            const upd = await Job.findByIdAndUpdate(application.job._id, updatedJob, {new: true})
-            console.log('udpated', upd)
+            const updJob = await Job.findByIdAndUpdate(application.job._id, updatedJob, {new: true})
+            const rej = await Application
+                .updateMany(
+                    {job: upd.job, _id: {$not: {$eq: upd._id}}},
+                    {$set: {status: 'rejected'}})
+            console.log('updJob, rej', updJob, rej)
         }
 
         // Reject all other applications made by that applicant
