@@ -29,6 +29,7 @@ import {lightGreen} from '@material-ui/core/colors'
 import {useAuth} from '../../../context/auth'
 import {Link} from 'react-router-dom'
 import format from 'date-fns/format'
+import Fuse from 'fuse.js'
 
 const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
     return (

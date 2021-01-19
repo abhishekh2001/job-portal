@@ -19,11 +19,21 @@ import applicationService from '../../../services/applicationService'
 import {useAuth} from '../../../context/auth'
 import { withRouter } from 'react-router-dom';
 
+const wordCount = (str) => {
+    return str.split(' ')
+        .filter(function (n) {
+            return n !== ''
+        })
+        .length
+}
 
 const validationSchema = yup.object({
     sop: yup
         .string('Enter sop')
         .required('sop is required')
+        .test('wordcount',
+            'Bio is limited to 250 characters',
+            (v, c) => !v || wordCount(v) <= 250),
 })
 
 
