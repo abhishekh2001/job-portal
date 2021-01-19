@@ -30,6 +30,7 @@ import {useAuth} from '../../../context/auth'
 import {Link} from 'react-router-dom'
 import format from 'date-fns/format'
 import Fuse from 'fuse.js'
+import {Rating} from '@material-ui/lab'
 
 const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
     return (
@@ -234,6 +235,10 @@ const ApplicantJobListDashboard = () => {
     useEffect(() => {
         (async () => {
             const response = await jobService.getAll()
+            for (let ind in response) {
+                response[ind]['rating'] = response[ind].ratings
+                    .reduce((acc, el) => acc + el.value, 0)
+            }
             console.log('response', response)
             setJobs(getActiveJobs(response))
         })()
@@ -268,7 +273,9 @@ const ApplicantJobListDashboard = () => {
                                 <TableRow key={item._id}>
                                     <TableCell>{item.title}</TableCell>
                                     <TableCell>{item.recruiter.user.name}</TableCell>
-                                    <TableCell>{item.rating}</TableCell>
+                                    <TableCell>
+                                        <Rating name="read-only" precision={0.5} size='small' value={item.rating} readOnly />
+                                    </TableCell>
                                     <TableCell>{item.salaryPerMonth}</TableCell>
                                     <TableCell>{item.duration}</TableCell>
                                     <TableCell>{format((new Date(item.deadline)), 'yyyy-MM-dd\'T\'HH:mm')}</TableCell>

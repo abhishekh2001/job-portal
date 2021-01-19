@@ -66,11 +66,22 @@ router.put('/:id', middleware.auth, async (req, res, next) => {
                 if (field === 'maxApplications') {
                     const applicationsCount = await Application
                         .countDocuments({job: job._id})
+                    if (body[field] < applicationsCount)
+                        return next({name: 'BadRequestError', message: 'cannot be lesser than number of applicants'})
                     uJob['applicationStatus'] = applicationsCount >= body[field] ? 'full' : 'free'
                 }
                 if (field === 'maxPositions') {
                     const positionsCount = await Application
                         .countDocuments({job: job._id, status: 'accepted'})
+                    if (body[field] < positionsCount)
+                        return next({name: 'BadRequestError', message: 'cannot be lesser than number of accepted'})
+                    if (positionsCount >= body[field]) {
+                        const rej = await Application
+                            .updateMany(
+                                {job: job._id, status: {$ne: 'accepted'}},
+                                {$set: {status: 'rejected'}})
+                        console.log('rejected ', rej)
+                    }
                     uJob['positionStatus'] = positionsCount >= body[field] ? 'full' : 'free'
                 }
                 uJob[field] = body[field]

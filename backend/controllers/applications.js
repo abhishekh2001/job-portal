@@ -48,7 +48,7 @@ router.put('/rate/:appId', middleware.auth, async (req, res, next) => {
         if (!job)
             return next({name: 'BadRequestError', message: 'job is not available'})
         if (!applicant)
-            return next({name: 'AuthorizationError', message: 'user is not authorized to apply for this job'})
+            return next({name: 'AuthorizationError', message: 'user cannot rate this job'})
         if (applicant._id.toString() !== application.applicant.toString())
             return next({name: 'AuthorizationError', message: 'user is not authorized to apply for this job'})
         if (job.ratings.map(r => r.applicant.toString()).indexOf(applicant._id.toString()) >= 0)

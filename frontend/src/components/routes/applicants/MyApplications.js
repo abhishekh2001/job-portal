@@ -23,6 +23,7 @@ const MyApplications = () => {
         {id: 'dateOfJoining', name: 'Joining date', sortable: false},
         {id: 'salaryPerMonth', name: 'Salary', sortable: false},
         {id: 'recruiterName', name: 'Recruiter name', sortable: false},
+        {id: 'status', name: 'Status', sortable: false},
         {id: 'rating', name: 'My Rating', sortable: false}
     ]
     const {
@@ -70,6 +71,7 @@ const MyApplications = () => {
                                     </TableCell>
                                     <TableCell>{item.job.salaryPerMonth}</TableCell>
                                     <TableCell>{item.job.recruiter.user.name}</TableCell>
+                                    <TableCell>{item.status}</TableCell>
                                     <TableCell>
                                         {
                                             item.status === 'accepted' ?
