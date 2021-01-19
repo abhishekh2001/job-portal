@@ -236,8 +236,8 @@ const ApplicantJobListDashboard = () => {
         (async () => {
             const response = await jobService.getAll()
             for (let ind in response) {
-                response[ind]['rating'] = response[ind].ratings
-                    .reduce((acc, el) => acc + el.value, 0)
+                response[ind]['rating'] = (response[ind].ratings
+                    .reduce((acc, el) => acc + el.value, 0)) / response[ind].ratings.length
             }
             console.log('response', response)
             setJobs(getActiveJobs(response))

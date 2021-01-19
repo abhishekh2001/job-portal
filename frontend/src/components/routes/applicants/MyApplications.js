@@ -15,6 +15,7 @@ import {TextField} from 'formik-material-ui'
 import * as yup from 'yup'
 import applicationService from '../../../services/applicationService'
 import {Alert, Rating} from '@material-ui/lab'
+import {withRouter} from 'react-router-dom'
 
 const validationSchema = yup.object({
     value: yup
@@ -85,7 +86,7 @@ const App = ({onSubmit}) => (
     </Formik>
 )
 
-const MyApplications = () => {
+const MyApplications = (props) => {
     const classes = useStyles()
     const {authTokens} = useAuth()
     const [myApplications, setMyApplications] = useState([])
@@ -194,4 +195,4 @@ const MyApplications = () => {
     )
 }
 
-export default MyApplications
+export default withRouter(MyApplications)
