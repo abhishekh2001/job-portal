@@ -4,7 +4,7 @@ import {
     Button,
     LinearProgress,
     Typography,
-    makeStyles, Container, CssBaseline, Avatar, Grid, Link, TextareaAutosize,
+    makeStyles, Container, CssBaseline, Avatar, Grid, TextareaAutosize,
 } from '@material-ui/core'
 import {
     TextField,
@@ -13,10 +13,12 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import React, {useEffect, useState} from 'react'
 import {Alert} from '@material-ui/lab'
-import {Redirect} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import useStyles from '../../styles/generalStyles'
 import applicationService from '../../../services/applicationService'
 import {useAuth} from '../../../context/auth'
+import { withRouter } from 'react-router-dom';
+
 
 const validationSchema = yup.object({
     sop: yup
@@ -81,6 +83,7 @@ const ApplyToJob = (props) => {
         try {
             const savedApp = await applicationService.applyToJob(props.match.params.jobId, values, authTokens.token)
             console.log('save as', savedApp)
+            props.history.push('/browseJobs')
         } catch (err) {
             setMessage({error: true, content: err.response.data.error})
             setSubmitting(false)
@@ -96,4 +99,4 @@ const ApplyToJob = (props) => {
     )
 }
 
-export default ApplyToJob
+export default withRouter(ApplyToJob)

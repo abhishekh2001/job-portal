@@ -28,6 +28,7 @@ import applicantServices from '../../../services/applicantServices'
 import {lightGreen} from '@material-ui/core/colors'
 import {useAuth} from '../../../context/auth'
 import {Link} from 'react-router-dom'
+import format from 'date-fns/format'
 
 const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
     return (
@@ -172,7 +173,7 @@ const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
 
 const ApplicantJobListDashboard = () => {
     const classes = useStyles()
-    const { authTokens } = useAuth()
+    const {authTokens} = useAuth()
     const [jobs, setJobs] = useState([])
     const [jobsAppliedTo, setJobsAppliedTo] = useState([])
     const [filterFn, setFilterFn] = useState({fn: (items) => items})
@@ -198,9 +199,14 @@ const ApplicantJobListDashboard = () => {
         maxSalary: '',
         duration: ''
     }
+    const styles = theme => ({
+        disabledButton: {
+            backgroundColor: '#FFF'
+        }
+    })
 
     useEffect(() => {
-        ( async() => {
+        (async () => {
             try {
                 console.log('token', authTokens.token)
                 const response = await applicantServices.getJobsAppliedTo(authTokens.token)
@@ -259,18 +265,29 @@ const ApplicantJobListDashboard = () => {
                                     <TableCell>{item.rating}</TableCell>
                                     <TableCell>{item.salaryPerMonth}</TableCell>
                                     <TableCell>{item.duration}</TableCell>
-                                    <TableCell>{item.deadline}</TableCell>
+                                    <TableCell>{format((new Date(item.deadline)), 'yyyy-MM-dd\'T\'HH:mm')}</TableCell>
                                     <TableCell>{item.typeOfJob}</TableCell>
                                     <TableCell>
-                                        {jobsAppliedTo.indexOf(item._id)>=0 ?
-                                            <Button disabled>Applied</Button>
+                                        {jobsAppliedTo.indexOf(item._id) >= 0 ?
+                                            <Button disabled color='secondary'>Applied</Button>
                                             :
-                                            <Button
-                                                variant='outlined'
-                                                href={`/apply/${item._id}`}
-                                            >
-                                                Apply
-                                            </Button>
+                                            (item.applicationStatus === 'full' || item.positionStatus === 'full' ?
+                                                    <Button
+                                                        disabled
+                                                        classes={{ disabled: classes.disabledButton }}
+                                                        variant='contained'
+                                                    >
+                                                        Full
+                                                    </Button>
+                                                    :
+                                                    <Button
+                                                        variant='outlined'
+                                                        color='primary'
+                                                        href={`/apply/${item._id}`}
+                                                    >
+                                                        Apply
+                                                    </Button>
+                                            )
                                         }
                                     </TableCell>
                                 </TableRow>
