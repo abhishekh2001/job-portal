@@ -4,7 +4,7 @@ import CustomTable from '../../CustomTable'
 import useStyles from '../../styles/generalStyles'
 import jobService from '../../../services/jobService'
 import {
-    Box, Chip,
+    Box, ButtonGroup, Chip,
     Collapse, Divider,
     makeStyles,
     Paper,
@@ -20,7 +20,9 @@ import IconButton from '@material-ui/core/IconButton'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import format from 'date-fns/format'
-import {Rating} from '@material-ui/lab'
+import {Alert, Rating} from '@material-ui/lab'
+import Button from '@material-ui/core/Button'
+import applicationService from '../../../services/applicationService'
 
 const useRowStyles = makeStyles({
     root: {
@@ -45,9 +47,44 @@ const useRowStyles = makeStyles({
 })
 
 
-const CustomTableRow = ({item}) => {
+const CustomTableRow = ({item, setMessage, recToken}) => {
     const [open, setOpen] = useState(false)
     const classes = useRowStyles()
+    let choice
+    let rating
+    const updateStatus = async (status) => {
+        const body = {
+            status
+        }
+        try {
+            const updated = await applicationService.updateApplicationStatus(item._id.toString(), body, recToken)
+            console.log('response', updated)
+            window.location.reload()
+        } catch (err) {
+            console.log('err', err.response)
+            setMessage({severity: 'error', content: err.response.data.error})
+        }
+    }
+    if (item.status === 'applied') {
+        choice = (
+            <ButtonGroup>
+                <Button color='primary' onClick={() => updateStatus('shortlisted')}>Shortlist</Button>
+                <Button color='secondary' onClick={() => updateStatus('rejected')}>Reject</Button>
+            </ButtonGroup>
+        )
+    } else if (item.status === 'shortlisted') {
+        choice = (
+            <ButtonGroup>
+                <Button color='primary' onClick={() => updateStatus('accepted')}>Accept</Button>
+                <Button color='secondary' onClick={() => updateStatus('rejected')}>Reject</Button>
+            </ButtonGroup>
+        )
+    } else {
+        choice = (
+            <Button fullWidth disabled>Accepted</Button>
+        )
+    }
+
     return (
         <React.Fragment>
             <TableRow className={classes.root}>
@@ -59,8 +96,10 @@ const CustomTableRow = ({item}) => {
                 <TableCell>{item.appName}</TableCell>
                 <TableCell>{format((new Date(item.dateOfApplication)), 'yyyy-MM-dd\'T\'HH:mm')}</TableCell>
                 <TableCell>{item.status}</TableCell>
-                <TableCell><Rating name="read-only" value={item.applicantRating} readOnly /></TableCell>
-                <TableCell>Shortlist</TableCell>
+                <TableCell><Rating name="read-only" value={item.applicantRating} readOnly/></TableCell>
+                <TableCell>
+                    {choice}
+                </TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
@@ -79,7 +118,7 @@ const CustomTableRow = ({item}) => {
                                 </TableHead>
                                 <TableBody>
                                     {item.applicant.education.map(ed => (
-                                        <TableRow key={ed.id}>
+                                        <TableRow key={ed._id}>
                                             <TableCell component="th" scope="row">
                                                 {ed.instituteName}
                                             </TableCell>
@@ -131,6 +170,7 @@ const ViewApplications = (props) => {
     const classes = useStyles()
     const {authTokens} = useAuth()
     const [applications, setApplications] = useState([])
+    const [message, setMessage] = useState(null)
     const [jobTitle, setJobTitle] = useState('')
     const [filterFn, setFilterFn] = useState({fn: (items) => items})
     const {jobId} = props.match.params
@@ -171,6 +211,7 @@ const ViewApplications = (props) => {
     return (
         <div>
             <div className={classes.appBarSpacer}/>
+            {message && <Alert severity={message.severity}>{message.content}</Alert> }
             <Grid container style={{marginBottom: '40px'}}>
                 <Grid item xs={12}>
                     <Typography variant="h3" component='h5'>
@@ -193,7 +234,12 @@ const ViewApplications = (props) => {
                     >
                         <TableBody>
                             {recordsAfterSorting().map(item => (
-                                <CustomTableRow item={item}/>
+                                <CustomTableRow
+                                    item={item}
+                                    key={item._id}
+                                    setMessage={setMessage}
+                                    recToken={authTokens.token}
+                                />
                             ))}
                         </TableBody>
                     </SortableTable>
