@@ -16,6 +16,7 @@ import AppToolBar from './components/AppToolBar'
 import ApplyToJob from './components/routes/applicants/Apply'
 import MyApplications from './components/routes/applicants/MyApplications'
 import ViewApplications from './components/routes/recruiters/ViewApplications'
+import MasterAuth from './components/routes/auth/MasterAuth'
 
 const App = () => {
     const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
@@ -33,7 +34,8 @@ const App = () => {
                     <div>
                         <br/>
                         <Route exact path='/' component={Home}/>
-                        <Route path='/register' component={Register}/>
+                        <Route path='/register' component={MasterAuth}/>
+                        <Route exact path='/newUser' component={MasterAuth} />
                         <Route path='/applicantRegister' component={ApplicantRegister}/>
                         <Route path='/recruiterRegister' component={RecruiterRegister}/>
                         <Route path='/login' component={Login}/>
