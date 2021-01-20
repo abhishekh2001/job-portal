@@ -103,11 +103,12 @@ const JobEditForm = ({job, handleOnUpdate, jobs, setOpenPopup}) => {
     const [error, setError] = useState(true)
     const classes = useStyles()
 
+    console.log('job', job.maxPositions)
+
     const {authTokens} = useAuth()
 
 
     const updateJob = async (values, {setSubmitting}) => {
-        console.log('Submitting')
         try {
             const body = {...values}
             const result = await jobService.updateOne(job._id, body, authTokens.token)
@@ -117,15 +118,17 @@ const JobEditForm = ({job, handleOnUpdate, jobs, setOpenPopup}) => {
             setError(false)
             setMessage('Updated')
             await new Promise((resolve)=>setTimeout(() => {
-                resolve();
+                resolve()
             }, 1000))
-
             setSubmitting(false)
             handleOnUpdate()
             setOpenPopup(false)
         } catch (err) {
-            console.log('err', err.response.data.error)
-            setMessage(err.response.data.error)
+            console.log('err', err.response)
+            if (err.response.data.error) {
+                console.log('err', err.response.data.error)
+                setMessage(err.response.data.error)
+            }
             setSubmitting(false)
         }
     }

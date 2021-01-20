@@ -90,6 +90,7 @@ router.put('/:id', middleware.auth, async (req, res, next) => {
 
         const savedJob = await Job.findByIdAndUpdate(req.params.id, uJob, {new: true})
 
+        console.log('SAVED JOB', savedJob)
         if (!savedJob) {
             next({name: 'DocumentNotFoundError', message: 'error updating document'})
         } else {

@@ -14,7 +14,6 @@ const JobListDashboard = () => {
     const classes = useStyles()
     const { authTokens } = useAuth()
     const [jobs, setJobs] = useState([])
-    const [openPopup, setOpenPopup] = useState(false)
 
     const getActiveJobs = jobs => {
         return jobs.filter(j => j.positionStatus === 'free')
@@ -55,20 +54,7 @@ const JobListDashboard = () => {
             <Grid container spacing={2}>
                 {jobs.map(job => (
                     <Grid item xs={12} sm={4} key={job._id}>
-                        <JobCard job={job} setOpenPopup={setOpenPopup} deleteJob={() => deleteJob(job._id)} />
-
-                        <JobEditPopup
-                            openPopup={openPopup}
-                            setOpenPopup={setOpenPopup}
-                            title={job.title}
-                        >
-                            <JobEditForm
-                                job={job}
-                                handleOnUpdate={() => getUpdatedJob(job._id.toString())}
-                                setOpenPopup={setOpenPopup}
-                            />
-                        </JobEditPopup>
-
+                        <JobCard job={job} deleteJob={() => deleteJob(job._id)} getUpdatedJob={getUpdatedJob} />
                     </Grid>
                 ))}
             </Grid>

@@ -20,7 +20,6 @@ const updateOne = async (id, data, token) => {
         headers: { Authorization: `Bearer ${token}` }
     }
 
-    console.log('updating...')
     const response = await axios.put(`${baseUrl}/${id}`, data, config)
     console.log('updateOne', response.data)
     return response.data
