@@ -137,11 +137,11 @@ const MyApplications = (props) => {
     return (
         <div>
             <div className={classes.appBarSpacer}/>
-            <Typography variant="h3" component="h5">
+            <Typography variant="h3" component="h5" style={{marginBottom: '40px'}}>
                 My Applications
             </Typography>
             <Grid container spacing={2}>
-                <Paper>
+                <Grid component={Paper} xs={12}>
                     <SortableTable
                         records={myApplications}
                         headCells={headers}
@@ -190,7 +190,7 @@ const MyApplications = (props) => {
                             ))}
                         </TableBody>
                     </SortableTable>
-                </Paper>
+                </Grid>
             </Grid>
         </div>
     )
