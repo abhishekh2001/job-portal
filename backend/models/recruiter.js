@@ -10,8 +10,7 @@ const recruiterSchema = new mongoose.Schema({
         type: String,
     },
     bio: {
-        type: String,
-        maxlength: 250
+        type: String
     }
 })
 

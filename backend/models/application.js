@@ -3,7 +3,6 @@ const mongoose = require('mongoose')
 const applicationSchema = new mongoose.Schema({
     sop: {
         type: String,
-        maxlength: 250,
         required: true
     },
     job: {

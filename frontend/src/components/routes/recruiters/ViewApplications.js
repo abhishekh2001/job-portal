@@ -19,6 +19,8 @@ import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
+import format from 'date-fns/format'
+import {Rating} from '@material-ui/lab'
 
 const useRowStyles = makeStyles({
     root: {
@@ -55,10 +57,9 @@ const CustomTableRow = ({item}) => {
                     </IconButton>
                 </TableCell>
                 <TableCell>{item.appName}</TableCell>
-                <TableCell>{item.dateOfApplication}</TableCell>
-                <TableCell>{item.sop}</TableCell>
+                <TableCell>{format((new Date(item.dateOfApplication)), 'yyyy-MM-dd\'T\'HH:mm')}</TableCell>
                 <TableCell>{item.status}</TableCell>
-                <TableCell>{item.applicantRating}</TableCell>
+                <TableCell><Rating name="read-only" value={item.applicantRating} readOnly /></TableCell>
                 <TableCell>Shortlist</TableCell>
             </TableRow>
             <TableRow>
@@ -89,7 +90,7 @@ const CustomTableRow = ({item}) => {
                                 </TableBody>
                             </Table>
                             <Divider/>
-                            <Grid container>
+                            <Grid container style={{marginTop: '30px'}}>
                                 <Grid item xs={2}>
                                     <Typography variant="h6" gutterBottom component="div" style={{fontWeight: 'bold'}}>
                                         Skills
@@ -108,6 +109,15 @@ const CustomTableRow = ({item}) => {
                                         ))}
                                     </Grid>
                                 </Grid>
+                                <Grid container style={{marginTop: '30px'}}>
+                                    <Typography variant="h6" gutterBottom component="div" style={{fontWeight: 'bold'}}>
+                                        Statement of Purpose
+                                    </Typography>
+                                    <Grid item xs={12}
+                                          style={{backgroundColor: '#6C7A89', color: 'white', padding: '30px'}}>
+                                        {item.sop}
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Box>
                     </Collapse>
@@ -121,13 +131,13 @@ const ViewApplications = (props) => {
     const classes = useStyles()
     const {authTokens} = useAuth()
     const [applications, setApplications] = useState([])
+    const [jobTitle, setJobTitle] = useState('')
     const [filterFn, setFilterFn] = useState({fn: (items) => items})
     const {jobId} = props.match.params
     const headers = [
         {id: 'bl', name: '', sortable: false},
         {id: 'appName', name: 'Name', sortable: true},
         {id: 'dateOfApplication', name: 'Application date', sortable: true},
-        {id: 'sop', name: 'SOP', sortable: false},
         {id: 'state', name: 'State', sortable: false},
         {id: 'applicantRating', name: 'Rating', sortable: true},
         {id: 'proceed', name: 'Choose', sortable: false}
@@ -149,6 +159,9 @@ const ViewApplications = (props) => {
                 }
                 console.log('response modified to ', response)
                 setApplications(response.filter(ap => ap.status !== 'rejected'))
+
+                const job = await jobService.getOne(jobId)
+                setJobTitle(job.title)
             } catch (err) {
                 console.log('error', err)
             }
@@ -158,9 +171,18 @@ const ViewApplications = (props) => {
     return (
         <div>
             <div className={classes.appBarSpacer}/>
-            <Typography variant="h3" component="h5">
-                Browse Jobs
-            </Typography>
+            <Grid container style={{marginBottom: '40px'}}>
+                <Grid item xs={12}>
+                    <Typography variant="h3" component='h5'>
+                        {jobTitle}
+                    </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="h4" component="h6">
+                        View applications
+                    </Typography>
+                </Grid>
+            </Grid>
             <Grid>
                 <Paper>
                     <SortableTable

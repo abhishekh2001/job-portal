@@ -24,7 +24,7 @@ const JobCard = ({job, setOpenPopup, deleteJob}) => {
     return (
         <Card className={classes.root}>
             <CardActionArea>
-                <Link to={`/viewApplications/${job._id}`}>
+                <Link to={`/viewApplications/${job._id}`} style={{textDecoration: 'none', color: 'inherit'}}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
                             {job.title}
