@@ -38,6 +38,19 @@ const applicantSchema = new mongoose.Schema({
         min: 0,
         max: 5
     },
+    ratings: [
+        {
+            recruiter: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Recruiter'
+            },
+            value: {
+                type: Number,
+                min: 0,
+                max: 5
+            }
+        }
+    ],
     applications: [
         {
             type: mongoose.Schema.Types.ObjectId,

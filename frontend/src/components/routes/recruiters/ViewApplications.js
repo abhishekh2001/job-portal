@@ -51,7 +51,6 @@ const CustomTableRow = ({item, setMessage, recToken}) => {
     const [open, setOpen] = useState(false)
     const classes = useRowStyles()
     let choice
-    let rating
     const updateStatus = async (status) => {
         const body = {
             status
@@ -96,7 +95,7 @@ const CustomTableRow = ({item, setMessage, recToken}) => {
                 <TableCell>{item.appName}</TableCell>
                 <TableCell>{format((new Date(item.dateOfApplication)), 'yyyy-MM-dd\'T\'HH:mm')}</TableCell>
                 <TableCell>{item.status}</TableCell>
-                <TableCell><Rating name="read-only" value={item.applicantRating} readOnly/></TableCell>
+                <TableCell><Rating name="read-only" value={item.applicantRating} precision={0.5} readOnly/></TableCell>
                 <TableCell>
                     {choice}
                 </TableCell>
@@ -193,8 +192,14 @@ const ViewApplications = (props) => {
                 const response = await jobService.getApplications(jobId)
                 console.log('immediate', response)
                 for (let ind in response) {
+                    let applicantRating = 0
+                    if (response[ind].applicant.ratings.length > 0) {
+                        console.log('rating in ', response[ind])
+                        applicantRating = response[ind].applicant.ratings
+                            .reduce((cum, cur) => cum + cur.value, 0) / response[ind].applicant.ratings.length
+                    }
                     response[ind].appName = response[ind].applicant.user.name
-                    response[ind].applicantRating = response[ind].applicant.rating
+                    response[ind].applicantRating = applicantRating
                     console.log('name', response[ind].applicant.user.name)
                 }
                 console.log('response modified to ', response)

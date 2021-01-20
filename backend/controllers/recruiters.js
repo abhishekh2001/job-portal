@@ -4,6 +4,7 @@ const middleware = require('../utils/middleware')
 const Recruiter = require('../models/recruiter')
 const Application = require('../models/application')
 const User = require('../models/user')
+const Applicant = require('../models/applicant')
 const router = express.Router()
 
 router.get('/', async (req, res, next) => {
@@ -88,6 +89,47 @@ router.put('/:id', middleware.auth, async (req, res, next) => {
             .findByIdAndUpdate(recruiter._id, updatedRecruiter, {new:true})
             .populate({path: 'user', model: 'User'})
         res.json(savedRecruiter)
+    } catch (err) {
+        next(err)
+    }
+})
+
+router.put('/rate/:appId', middleware.auth, async (req, res, next) => {
+    const appId = req.params.appId
+    const user = req.user
+    const body = req.body
+
+    if (user.type !== 'recruiter')
+        return next({name: 'AuthorizationError', message: 'user is not authorized to rate this applicant'})
+
+    try {
+        const recruiter = await Recruiter.findOne({user: user.id})
+        const applicant = await Applicant.findById(appId)
+        if (!recruiter)
+            return next({
+                name: 'BadRequestError',
+                message: 'recruiter does not exist'
+            })
+        if (!applicant)
+            return next({
+                name: 'BadRequestError',
+                message: 'applicant does not exist'
+            })
+        if (applicant.ratings.map(a => a.recruiter.toString()).indexOf(recruiter._id.toString()))
+            return next ({
+                name: 'BadRequestError',
+                message: 'recruiter has already rated this applicant'
+            })
+        if (!body.value)
+            return next ({
+                name: 'BadRequestError',
+                message: 'Incorrect body format'
+            })
+
+        applicant.ratings.push({recruiter: recruiter._id, value: body.value})
+        const saved = await applicant.save()
+        console.log('saved as', saved)
+        res.json(saved)
     } catch (err) {
         next(err)
     }
