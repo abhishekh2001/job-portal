@@ -1,20 +1,132 @@
 import {useAuth} from '../../../context/auth'
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import CustomTable from '../../CustomTable'
 import useStyles from '../../styles/generalStyles'
 import jobService from '../../../services/jobService'
+import {
+    Box, Chip,
+    Collapse, Divider,
+    makeStyles,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    Typography
+} from '@material-ui/core'
+import Grid from '@material-ui/core/Grid'
+import IconButton from '@material-ui/core/IconButton'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
+
+const useRowStyles = makeStyles({
+    root: {
+        '& > *': {
+            borderBottom: 'unset',
+        },
+    },
+    miniTableHead: {
+        '& > *': {
+            fontWeight: 'bold'
+        }
+    },
+    chip: {
+        margin: '5px',
+    },
+    chipArray: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        listStyle: 'none',
+        margin: 0
+    }
+})
+
+
+const CustomTableRow = ({item}) => {
+    const [open, setOpen] = useState(false)
+    const classes = useRowStyles()
+    return (
+        <React.Fragment>
+            <TableRow className={classes.root}>
+                <TableCell>
+                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                    </IconButton>
+                </TableCell>
+                <TableCell>{item.appName}</TableCell>
+                <TableCell>{item.dateOfApplication}</TableCell>
+                <TableCell>{item.sop}</TableCell>
+                <TableCell>{item.status}</TableCell>
+                <TableCell>{item.applicantRating}</TableCell>
+                <TableCell>Shortlist</TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box margin={1}>
+                            <Typography variant="h6" gutterBottom component="div" style={{fontWeight: 'bold'}}>
+                                Education
+                            </Typography>
+                            <Table size="small" aria-label="Education">
+                                <TableHead>
+                                    <TableRow className={classes.miniTableHead}>
+                                        <TableCell>Institute Name</TableCell>
+                                        <TableCell>Start Year</TableCell>
+                                        <TableCell>End Year</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {item.applicant.education.map(ed => (
+                                        <TableRow key={ed.id}>
+                                            <TableCell component="th" scope="row">
+                                                {ed.instituteName}
+                                            </TableCell>
+                                            <TableCell>{ed.startYear}</TableCell>
+                                            <TableCell>{ed.endYear}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                            <Divider/>
+                            <Grid container>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" gutterBottom component="div" style={{fontWeight: 'bold'}}>
+                                        Skills
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Grid className={classes.chipArray} component='ul'>
+                                        {item.applicant.skills.map((sk, it) => (
+                                            <li key={it}>
+                                                <Chip
+                                                    icon={null}
+                                                    label={sk}
+                                                    className={classes.chip}
+                                                />
+                                            </li>
+                                        ))}
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </React.Fragment>
+    )
+}
 
 const ViewApplications = (props) => {
     const classes = useStyles()
     const {authTokens} = useAuth()
     const [applications, setApplications] = useState([])
     const [filterFn, setFilterFn] = useState({fn: (items) => items})
-    const { jobId } = props.match.params
+    const {jobId} = props.match.params
     const headers = [
+        {id: 'bl', name: '', sortable: false},
         {id: 'appName', name: 'Name', sortable: true},
-        {id: 'skills', name: 'Skills', sortable: false},
         {id: 'dateOfApplication', name: 'Application date', sortable: true},
-        {id: 'education', name: 'Education', sortable: false},
         {id: 'sop', name: 'SOP', sortable: false},
         {id: 'state', name: 'State', sortable: false},
         {id: 'applicantRating', name: 'Rating', sortable: true},
@@ -36,7 +148,7 @@ const ViewApplications = (props) => {
                     console.log('name', response[ind].applicant.user.name)
                 }
                 console.log('response modified to ', response)
-                setApplications(response)
+                setApplications(response.filter(ap => ap.status !== 'rejected'))
             } catch (err) {
                 console.log('error', err)
             }
@@ -45,7 +157,26 @@ const ViewApplications = (props) => {
 
     return (
         <div>
-
+            <div className={classes.appBarSpacer}/>
+            <Typography variant="h3" component="h5">
+                Browse Jobs
+            </Typography>
+            <Grid>
+                <Paper>
+                    <SortableTable
+                        records={applications}
+                        headCells={headers}
+                        filterFn={filterFn}
+                        setData={setApplications}
+                    >
+                        <TableBody>
+                            {recordsAfterSorting().map(item => (
+                                <CustomTableRow item={item}/>
+                            ))}
+                        </TableBody>
+                    </SortableTable>
+                </Paper>
+            </Grid>
         </div>
     )
 }

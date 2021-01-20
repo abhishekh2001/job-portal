@@ -13,7 +13,7 @@ const applicationSchema = new mongoose.Schema({
     },
     dateOfApplication: {
         type: Date,
-        default: new Date()
+        default: Date.now
     },
     dateOfJoining: {
         type: Date,

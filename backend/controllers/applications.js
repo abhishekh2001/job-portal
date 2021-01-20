@@ -94,7 +94,8 @@ router.post('/applicant/:jobId', middleware.auth, async (req, res, next) => {
             })
 
         const numUserApplications = await Application
-            .countDocuments({applicant: applicant._id, status: 'applied'})
+            .countDocuments({applicant: applicant._id, $or: [{status: 'applied'}, {status: 'shortlisted'}]})
+        console.log('numUserApplication', numUserApplications)
         if (numUserApplications >= 10)
             return next({
                 name: 'BadRequestError',
