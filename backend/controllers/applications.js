@@ -196,7 +196,7 @@ router.put('/recruiter/:appId', middleware.auth, async (req, res, next) => {
             const updJob = await Job.findByIdAndUpdate(application.job._id, updatedJob, {new: true})
             const rej = await Application
                 .updateMany(
-                    {job: upd.job, _id: {$not: {$eq: upd._id}}},
+                    {job: upd.job, status: {$not: {$eq: 'accepted'}}},
                     {$set: {status: 'rejected'}})
             console.log('updJob, rej', updJob, rej)
         }

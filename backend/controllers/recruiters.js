@@ -135,4 +135,45 @@ router.put('/rate/:appId', middleware.auth, async (req, res, next) => {
     }
 })
 
+router.get('/list/acceptedApplications', middleware.auth, async (req, res, next) => {
+    const user = req.user
+    if (!user || user.type !== 'recruiter')
+        return next({
+            name: 'AuthorizationError',
+            message: 'user does not exist or is not authorized'
+        })
+
+    try {
+        const recruiter = await Recruiter.findOne({user: user.id})
+        if (!recruiter)
+            return next({
+                name: 'AuthorizationError',
+                message: 'user is not authorized'
+            })
+        const accepted = await Application
+            .find({status: 'accepted'})
+            .populate({
+                path: 'job',
+                model: 'Job'
+            })
+            .populate({
+                path: 'applicant',
+                model: 'Applicant',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+        const resp = []
+        for (let ind in accepted) {
+            if (accepted[ind].job.recruiter.toString() === recruiter._id.toString())
+                resp.push(accepted[ind])
+        }
+        console.log('resulting array len: ', resp.length)  // TODO: test
+        res.json(resp)
+    } catch (err) {
+        next(err)
+    }
+})
+
 module.exports = router
