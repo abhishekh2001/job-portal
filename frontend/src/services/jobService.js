@@ -39,12 +39,18 @@ const deleteOne = async (id, token) => {
     return response
 }
 
+const getApplications = async (id) => {
+    const response = await axios.get(`${baseUrl}/applications/${id}`)
+    return response.data
+}
+
 const jobService = {
     postOne,
     updateOne,
     getOne,
     deleteOne,
-    getAll
+    getAll,
+    getApplications
 }
 
 export default jobService

@@ -15,6 +15,7 @@ import Dashboard from './components/Test'
 import AppToolBar from './components/AppToolBar'
 import ApplyToJob from './components/routes/applicants/Apply'
 import MyApplications from './components/routes/applicants/MyApplications'
+import ViewApplications from './components/routes/recruiters/ViewApplications'
 
 const App = () => {
     const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
@@ -31,7 +32,7 @@ const App = () => {
                 <BrowserRouter>
                     <div>
                         <br/>
-                        <Route path='/' exact component={Home}/>
+                        <Route exact path='/' component={Home}/>
                         <Route path='/register' component={Register}/>
                         <Route path='/applicantRegister' component={ApplicantRegister}/>
                         <Route path='/recruiterRegister' component={RecruiterRegister}/>
@@ -44,6 +45,11 @@ const App = () => {
                         <PrivateRoute path='/jobListDashboard'
                                       type='recruiter'
                                       component={JobListDashboard}
+                        />
+                        <PrivateRoute path='/viewApplications/:jobId'
+                                      type='recruiter'
+                                      component={ViewApplications}
+                                      exact
                         />
 
                         <PrivateRoute path='/browseJobs'

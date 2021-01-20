@@ -126,7 +126,7 @@ const MyApplications = (props) => {
         try {
             const response = await applicationService.rateJob(appId, values, authTokens.token)
             console.log('response', response)
-            setOpenPopup(false)
+            setOpenPopup(false)  // TODO: refresh page on submit
         } catch (err) {
             setMessage(err.response.data.error)
         }

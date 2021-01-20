@@ -56,7 +56,7 @@ const FilterForm = ({classes, filter, setFilter, setFilterFn}) => {
                         if (values.typeOfJob !== '')
                             returnArr = returnArr.filter(item => item.typeOfJob === values.typeOfJob)
                         if (values.minSalary !== '')
-                            returnArr = returnArr.filter(item => item.salaryPerMonth > values.minSalary)
+                            returnArr = returnArr.filter(item => item.salaryPerMonth >= values.minSalary)
                         if (values.maxSalary !== '')
                             returnArr = returnArr.filter(item => item.salaryPerMonth < values.maxSalary)
                         if (values.duration !== '')
@@ -206,11 +206,6 @@ const ApplicantJobListDashboard = () => {
         maxSalary: '',
         duration: ''
     }
-    const styles = theme => ({
-        disabledButton: {
-            backgroundColor: '#FFF'
-        }
-    })
 
     useEffect(() => {
         (async () => {

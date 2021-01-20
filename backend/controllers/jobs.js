@@ -134,7 +134,16 @@ router.get('/applications/:jobId', async (req, res, next) => {
         if (!job)
             return next({name: 'DocumentNotFoundError', message: 'job not found'})
 
-        const applications = await Application.find({job: jobId})
+        const applications = await Application
+            .find({job: jobId})
+            .populate({
+                path: 'applicant',
+                model: 'Applicant',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
         res.json(applications)
     } catch (err) {
         next(err)

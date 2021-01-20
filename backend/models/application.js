@@ -11,6 +11,10 @@ const applicationSchema = new mongoose.Schema({
         ref: 'Job',
         required: true
     },
+    dateOfApplication: {
+        type: Date,
+        default: new Date()
+    },
     dateOfJoining: {
         type: Date,
     },
