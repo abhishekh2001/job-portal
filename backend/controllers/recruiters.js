@@ -115,15 +115,11 @@ router.put('/rate/:appId', middleware.auth, async (req, res, next) => {
                 name: 'BadRequestError',
                 message: 'applicant does not exist'
             })
-        if (applicant.ratings.map(a => a.recruiter.toString()).indexOf(recruiter._id.toString()))
+        console.log('ratings', applicant.ratings)
+        if (applicant.ratings.map(a => a.recruiter.toString()).indexOf(recruiter._id.toString()) >= 0)
             return next ({
                 name: 'BadRequestError',
                 message: 'recruiter has already rated this applicant'
-            })
-        if (!body.value)
-            return next ({
-                name: 'BadRequestError',
-                message: 'Incorrect body format'
             })
 
         applicant.ratings.push({recruiter: recruiter._id, value: body.value})
