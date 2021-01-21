@@ -115,7 +115,7 @@ router.put('/rate/:appId', middleware.auth, async (req, res, next) => {
                 name: 'BadRequestError',
                 message: 'applicant does not exist'
             })
-        console.log('ratings', applicant.ratings)
+        console.log('ratings', applicant.ratings, recruiter)
         if (applicant.ratings.map(a => a.recruiter.toString()).indexOf(recruiter._id.toString()) >= 0)
             return next ({
                 name: 'BadRequestError',

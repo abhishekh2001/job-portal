@@ -106,7 +106,7 @@ const DisplayProfile = ({applicant, setEdit}) => {
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
-                    Rating: <Rating disabled precision={0.2} name='rating' value={ratingValue} />
+                    Rating: <Rating disabled precision={0.1} name='rating' value={ratingValue} />
                 </Grid>
             </Grid>
         </Paper>
