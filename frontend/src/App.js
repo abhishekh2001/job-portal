@@ -18,6 +18,7 @@ import MyApplications from './components/routes/applicants/MyApplications'
 import ViewApplications from './components/routes/recruiters/ViewApplications'
 import MasterAuth from './components/routes/auth/MasterAuth'
 import AcceptedEmployees from './components/routes/recruiters/AcceptedEmployees'
+import Profile from './components/routes/Profile'
 
 const App = () => {
     const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
@@ -40,6 +41,7 @@ const App = () => {
                         <Route path='/applicantRegister' component={ApplicantRegister}/>
                         <Route path='/recruiterRegister' component={RecruiterRegister}/>
                         <Route path='/login' component={Login}/>
+                        <Route path='/profile' component={Profile} />
 
                         <PrivateRoute path='/jobPostDashboard'
                                       type='recruiter'

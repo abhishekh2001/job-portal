@@ -2,6 +2,14 @@ import axios from 'axios'
 
 const baseUrl = '/api/applicants'
 
+const getApplicant = async (token) => {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+    const response = await axios.get(`${baseUrl}/myProfile/details`, config)
+    return response.data
+}
+
 const getJobsAppliedTo = async (token) => {
     const config = {
         headers: { Authorization: `Bearer ${token}` }
@@ -27,6 +35,7 @@ const getJobRating = async (jobId, token) => {
 }
 
 const applicantServices = {
+    getApplicant,
     getJobsAppliedTo,
     getApplications,
     getJobRating

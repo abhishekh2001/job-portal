@@ -39,6 +39,27 @@ router.get('/:id', async (req, res, next) => {
     }
 })
 
+router.get('/myProfile/details', middleware.auth, async (req, res, next) => {
+    const user = req.user
+    console.log('INSIDE HERE')
+    console.log('user', user)
+    try {
+        const applicant = await Applicant
+            .findOne({user: user.id})
+            .populate({
+                path: 'user',
+                model: 'User'
+            })
+        if (!applicant) {
+            next({name: 'DocumentNotFoundError', message: 'applicant not found'})
+        } else {
+            res.json(applicant)
+        }
+    } catch (err) {
+        next(err)
+    }
+})
+
 router.put('/:id', middleware.auth, async (req, res, next) => {
     const user = req.user
     const body = req.body
