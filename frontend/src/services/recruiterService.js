@@ -11,6 +11,24 @@ const getRecruiterJobs = async (token) => {
     return response.data
 }
 
+const getRecruiter = async (token) => {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+
+    const response = await axios.get(`${baseUrl}/myProfile/details`, config)
+    return response.data
+}
+
+const updateRecruiter = async (body, token) => {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+
+    const response = await axios.put(`${baseUrl}`, body, config)
+    return response.data
+}
+
 const getAcceptedApplications = async (token) => {
     const config = {
         headers: { Authorization: `Bearer ${token}` }
@@ -30,6 +48,8 @@ const rateApplicant = async (appId, body, token) => {
 }
 
 const recruiterService =  {
+    getRecruiter,
+    updateRecruiter,
     getRecruiterJobs,
     getAcceptedApplications,
     rateApplicant

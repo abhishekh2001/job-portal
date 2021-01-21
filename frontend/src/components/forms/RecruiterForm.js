@@ -18,11 +18,7 @@ import useStyles from '../styles/formStyles'
 import {Redirect} from 'react-router-dom'
 
 const wordCount = (str) => {
-    return str.split(' ')
-        .filter(function (n) {
-            return n !== ''
-        })
-        .length
+    return str.split(/\s+/).length
 }
 
 

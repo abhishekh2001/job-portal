@@ -152,7 +152,11 @@ const CustomTableRow = ({item, setMessage, recToken}) => {
                                         Statement of Purpose
                                     </Typography>
                                     <Grid item xs={12}
-                                          style={{backgroundColor: '#6C7A89', color: 'white', padding: '30px'}}>
+                                          style={{backgroundColor: '#6C7A89',
+                                              color: 'white',
+                                              padding: '30px',
+                                              whiteSpace: 'pre-wrap'
+                                          }}>
                                         {item.sop}
                                     </Grid>
                                 </Grid>

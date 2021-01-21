@@ -3,28 +3,21 @@ import {Formik, Form, Field} from 'formik'
 import {
     Button,
     LinearProgress,
-    Typography,
-    makeStyles, Container, CssBaseline, Avatar, Grid, TextareaAutosize,
+    Grid,
 } from '@material-ui/core'
 import {
     TextField,
 } from 'formik-material-ui'
 
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import React, {useEffect, useState} from 'react'
 import {Alert} from '@material-ui/lab'
-import {Link, Redirect} from 'react-router-dom'
 import useStyles from '../../styles/generalStyles'
 import applicationService from '../../../services/applicationService'
 import {useAuth} from '../../../context/auth'
 import { withRouter } from 'react-router-dom';
 
 const wordCount = (str) => {
-    return str.split(' ')
-        .filter(function (n) {
-            return n !== ''
-        })
-        .length
+    return str.split(/\s+/).length
 }
 
 const validationSchema = yup.object({

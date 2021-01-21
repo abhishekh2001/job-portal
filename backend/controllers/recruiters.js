@@ -21,6 +21,21 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+router.get('/myProfile/details', middleware.auth, async (req, res, next) => {
+    const user = req.user
+    try {
+        const recruiters = await Recruiter
+            .findOne({user: user.id})
+            .populate({
+                path: 'user',
+                model: 'User'
+            })
+        res.json(recruiters)
+    } catch (err) {
+        next(err)
+    }
+})
+
 router.get('/:id', async (req, res, next) => {
     try {
         const recruiter = await Recruiter
@@ -61,9 +76,11 @@ router.get('/list/jobs', middleware.auth, async (req, res, next) => {
     }
 })
 
-router.put('/:id', middleware.auth, async (req, res, next) => {
+router.put('/', middleware.auth, async (req, res, next) => {
     const user = req.user
     const body = req.body
+
+    console.log('updating...')
 
     try {
         const recruiter = await Recruiter
