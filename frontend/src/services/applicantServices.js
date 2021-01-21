@@ -10,6 +10,14 @@ const getApplicant = async (token) => {
     return response.data
 }
 
+const updateApplicant = async (body, token) => {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+    const response = await axios.put(`${baseUrl}`, body, config)
+    return response.data
+}
+
 const getJobsAppliedTo = async (token) => {
     const config = {
         headers: { Authorization: `Bearer ${token}` }
@@ -36,6 +44,7 @@ const getJobRating = async (jobId, token) => {
 
 const applicantServices = {
     getApplicant,
+    updateApplicant,
     getJobsAppliedTo,
     getApplications,
     getJobRating

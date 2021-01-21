@@ -41,8 +41,6 @@ router.get('/:id', async (req, res, next) => {
 
 router.get('/myProfile/details', middleware.auth, async (req, res, next) => {
     const user = req.user
-    console.log('INSIDE HERE')
-    console.log('user', user)
     try {
         const applicant = await Applicant
             .findOne({user: user.id})
@@ -60,7 +58,7 @@ router.get('/myProfile/details', middleware.auth, async (req, res, next) => {
     }
 })
 
-router.put('/:id', middleware.auth, async (req, res, next) => {
+router.put('/', middleware.auth, async (req, res, next) => {
     const user = req.user
     const body = req.body
 

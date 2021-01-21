@@ -19,11 +19,7 @@ const applicantSchema = new mongoose.Schema({
                 }
             },
             endYear: {
-                type: Number,
-                validate: {
-                    validator: validators.yearValidator,
-                    message: props => `${props.value} is not a valid year`
-                }
+                type: Number
             }
         }
     ],
