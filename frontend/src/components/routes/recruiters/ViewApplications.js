@@ -3,6 +3,8 @@ import React, {useEffect, useState} from 'react'
 import CustomTable from '../../CustomTable'
 import useStyles from '../../styles/generalStyles'
 import jobService from '../../../services/jobService'
+import emailjs from 'emailjs-com';
+
 import {
     Box, ButtonGroup, Chip,
     Collapse, Divider,
@@ -23,6 +25,7 @@ import format from 'date-fns/format'
 import {Alert, Rating} from '@material-ui/lab'
 import Button from '@material-ui/core/Button'
 import applicationService from '../../../services/applicationService'
+import recruiterService from '../../../services/recruiterService'
 
 const useRowStyles = makeStyles({
     root: {
@@ -51,17 +54,31 @@ const CustomTableRow = ({item, setMessage, recToken}) => {
     const [open, setOpen] = useState(false)
     const classes = useRowStyles()
     let choice
-    const updateStatus = async (status) => {
+    const updateStatus = async (status, email) => {
         const body = {
             status
         }
         try {
             const updated = await applicationService.updateApplicationStatus(item._id.toString(), body, recToken)
             console.log('response', updated)
+            if (email) {
+                const rec = await recruiterService.getRecruiter(recToken)
+                const params = {
+                    applicantEmail: email,
+                    recruiter: rec.user.name
+                }
+                try {
+                    const res = await emailjs.send("service_uw11hrq", "template_enyvf04", params)
+                    console.log('email sent >', res)
+                } catch (err) {
+                    console.log('could not send email, err', err)
+                }
+            }
             window.location.reload()
         } catch (err) {
             console.log('err', err.response)
-            setMessage({severity: 'error', content: err.response.data.error})
+            if (err.response && err.response.data && err.response.data.error)
+                setMessage({severity: 'error', content: err.response.data.error})
         }
     }
     if (item.status === 'applied') {
@@ -74,7 +91,7 @@ const CustomTableRow = ({item, setMessage, recToken}) => {
     } else if (item.status === 'shortlisted') {
         choice = (
             <ButtonGroup>
-                <Button color='primary' onClick={() => updateStatus('accepted')}>Accept</Button>
+                <Button color='primary' onClick={() => updateStatus('accepted', item.applicant.user.email)}>Accept</Button>
                 <Button color='secondary' onClick={() => updateStatus('rejected')}>Reject</Button>
             </ButtonGroup>
         )

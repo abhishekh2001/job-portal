@@ -19,6 +19,8 @@ import ViewApplications from './components/routes/recruiters/ViewApplications'
 import MasterAuth from './components/routes/auth/MasterAuth'
 import AcceptedEmployees from './components/routes/recruiters/AcceptedEmployees'
 import Profile from './components/routes/Profile'
+import{ init } from 'emailjs-com';
+init("user_skGBjTEDVzaS7r7nQHFoz");
 
 const App = () => {
     const existingTokens = JSON.parse(localStorage.getItem('tokens') || null)
