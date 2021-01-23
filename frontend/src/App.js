@@ -31,8 +31,9 @@ const App = () => {
 
     return (
         <AuthContext.Provider value={{authTokens, setAuthTokens: setTokens}}>
+            <BrowserRouter>
             <AppToolBar>
-                <BrowserRouter>
+
                     <div>
                         <br/>
                         <Route exact path='/' component={Home}/>
@@ -83,8 +84,8 @@ const App = () => {
 
                         <Route path='/Test' component={Dashboard}/>
                     </div>
-                </BrowserRouter>
             </AppToolBar>
+            </BrowserRouter>
         </AuthContext.Provider>
     )
 }

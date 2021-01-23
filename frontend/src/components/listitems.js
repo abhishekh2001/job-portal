@@ -9,62 +9,89 @@ import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import {Link} from 'react-router-dom'
+import Divider from '@material-ui/core/Divider'
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 
-export const mainListItems = (
+export const recruiterListItems = (
     <div>
-        <ListItem button>
+        <ListItem button component={Link} to='/profile'>
             <ListItemIcon>
                 <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Dashboard" />
+            <ListItemText primary="Profile" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component={Link} to='/jobPostDashboard'>
             <ListItemIcon>
                 <ShoppingCartIcon />
             </ListItemIcon>
-            <ListItemText primary="Orders" />
+            <ListItemText primary="Create Job" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component={Link} to='/acceptedEmployees'>
             <ListItemIcon>
                 <PeopleIcon />
             </ListItemIcon>
-            <ListItemText primary="Customers" />
+            <ListItemText primary="Accepted Emp" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component={Link} to='/jobListDashboard'>
             <ListItemIcon>
                 <BarChartIcon />
             </ListItemIcon>
-            <ListItemText primary="Reports" />
+            <ListItemText primary="View Jobs" />
         </ListItem>
-        <ListItem button>
+        <Divider />
+        <ListItem button component={Link} to='/admin'>
             <ListItemIcon>
                 <LayersIcon />
             </ListItemIcon>
-            <ListItemText primary="Integrations" />
+            <ListItemText primary="Log out" />
         </ListItem>
     </div>
 )
 
-export const secondaryListItems = (
+export const applicantListItems = (
     <div>
-        <ListSubheader inset>Saved reports</ListSubheader>
-        <ListItem button>
+        <ListItem button component={Link} to='/profile'>
             <ListItemIcon>
-                <AssignmentIcon />
+                <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Current month" />
+            <ListItemText primary="Profile" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component={Link} to='/browseJobs'>
             <ListItemIcon>
-                <AssignmentIcon />
+                <ShoppingCartIcon />
             </ListItemIcon>
-            <ListItemText primary="Last quarter" />
+            <ListItemText primary="Browse Jobs" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component={Link} to='/myApplications'>
             <ListItemIcon>
-                <AssignmentIcon />
+                <PeopleIcon />
             </ListItemIcon>
-            <ListItemText primary="Year-end sale" />
+            <ListItemText primary="My applications" />
+        </ListItem>
+        <Divider />
+        <ListItem button component={Link} to='/admin'>
+            <ListItemIcon>
+                <LayersIcon />
+            </ListItemIcon>
+            <ListItemText primary="Log out" />
+        </ListItem>
+    </div>
+)
+
+export const unLoggedListItems = (
+    <div>
+        <ListItem button component={Link} to='/register'>
+            <ListItemIcon>
+                <LockOpenIcon />
+            </ListItemIcon>
+            <ListItemText primary="Register" />
+        </ListItem>
+        <ListItem button component={Link} to='/login'>
+            <ListItemIcon>
+                <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Log in" />
         </ListItem>
     </div>
 )

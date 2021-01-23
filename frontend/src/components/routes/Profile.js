@@ -6,13 +6,15 @@ import RecruiterProfile from './recruiters/RecruiterProfile'
 const Profile = () => {
     const {authTokens} = useAuth()
 
+    let profile = null
+    if (authTokens && authTokens.type === 'applicant')
+        profile = <ApplicantProfile />
+    else if (authTokens)
+        profile = <RecruiterProfile />
+
     return (
         <div>
-            {authTokens.type === 'applicant' ?
-                <ApplicantProfile />
-                :
-                <RecruiterProfile />
-            }
+            {profile}
         </div>
     )
 }

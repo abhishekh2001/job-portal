@@ -17,6 +17,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import {recruiterListItems, applicantListItems, unLoggedListItems} from './listitems'
+import {useAuth} from '../context/auth'
 
 const drawerWidth = 240;
 
@@ -86,6 +88,7 @@ export default function MiniDrawer(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const {authTokens} = useAuth();
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -94,6 +97,14 @@ export default function MiniDrawer(props) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
+    let listItems
+    if (!authTokens)
+        listItems = unLoggedListItems
+    else if (authTokens.type === 'applicant')
+        listItems = applicantListItems
+    else
+        listItems = recruiterListItems
 
     return (
         <div className={classes.root}>
@@ -117,7 +128,7 @@ export default function MiniDrawer(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Mini variant drawer
+                        LinkedOut
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -141,21 +152,7 @@ export default function MiniDrawer(props) {
                 </div>
                 <Divider />
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
-                </List>
-                <Divider />
-                <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
+                    {listItems}
                 </List>
             </Drawer>
             <main className={classes.content}>

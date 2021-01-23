@@ -2,7 +2,6 @@ import {useAuth} from '../../context/auth'
 import Button from '@material-ui/core/Button'
 import {Redirect} from 'react-router-dom'
 import React, {useState} from 'react'
-import AppToolBar from '../AppToolBar'
 import {makeStyles} from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 
@@ -105,7 +104,6 @@ function Admin() {
 
     return (
         <div>
-            <AppToolBar classes={classes}>
                 <div className={classes.appBarSpacer}/>
                 <Grid container justify="center" spacing={3}>
                     <Grid align='center'>
@@ -113,7 +111,6 @@ function Admin() {
                         <Button size="large" color="secondary" onClick={logOut}>Log out</Button>
                     </Grid>
                 </Grid>
-            </AppToolBar>
         </div>
     )
 }
