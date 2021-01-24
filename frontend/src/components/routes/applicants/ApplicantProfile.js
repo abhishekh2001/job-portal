@@ -141,6 +141,7 @@ const validationSchema = yup.object({
 
 
 const App = ({applicant, setMessage, classes, token}) => {
+    console.log('app', applicant)
     const initEducation = []
     for (let ind in applicant.education) {
         const temp = {...applicant.education[ind]}
@@ -156,7 +157,8 @@ const App = ({applicant, setMessage, classes, token}) => {
             initialValues={{
                 name: applicant.user.name,
                 skills: applicant.skills,
-                education: initEducation
+                education: initEducation,
+                profile: applicant.profile || ''
             }}
             validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
@@ -179,10 +181,30 @@ const App = ({applicant, setMessage, classes, token}) => {
                   values,
                   isSubmitting,
                   touched,
-                  errors
+                  errors,
+                  setFieldValue
               }) => (
                 <Form className={classes.form}>
                     <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            {<img id='profilePic' src={'data:image/png;base64,'+values.profile} />}
+                            <input id="file" name="file" type="file" accept='.jpeg, .png, .jpg' onChange={(event) => {
+                                const file = event.currentTarget.files[0]
+                                if (file) {
+                                    if (file.size < 80000) {
+                                        const reader = new FileReader()
+                                        reader.onload = (upload) => {
+                                            console.log('b64pic: ', upload)
+                                            setFieldValue("profile", btoa(upload.target.result))
+                                            document.getElementById('profilePic').src = 'data:image/png;base64,' + btoa(upload.target.result)
+                                        }
+                                        reader.readAsBinaryString(file)
+                                    } else {
+                                        window.alert('File size is too big')
+                                    }
+                                }
+                            }} />
+                        </Grid>
                         <Grid item xs={12}>
                             <Field
                                 component={TextField}

@@ -107,13 +107,17 @@ const App = ({setMessage, classes, setRegistered}) => (
                         <input id="file" name="file" type="file" accept='.jpeg, .png, .jpg' onChange={(event) => {
                             const file = event.currentTarget.files[0]
                             if (file) {
-                                const reader = new FileReader()
-                                reader.onload = (upload) => {
-                                    console.log('b64pic: ', btoa(upload.target.result))
-                                    setFieldValue("profile", btoa(upload.target.result))
-                                    document.getElementById('profilePic').src = 'data:image/png;base64,'+btoa(upload.target.result)
+                                if (file.size < 80000) {
+                                    const reader = new FileReader()
+                                    reader.onload = (upload) => {
+                                        console.log('b64pic: ', upload)
+                                        setFieldValue("profile", btoa(upload.target.result))
+                                        document.getElementById('profilePic').src = 'data:image/png;base64,' + btoa(upload.target.result)
+                                    }
+                                    reader.readAsBinaryString(file)
+                                } else {
+                                    window.alert('File size is too big')
                                 }
-                                reader.readAsBinaryString(file)
                             }
                         }} />
                     </Grid>
