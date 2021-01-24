@@ -52,7 +52,8 @@ const applicantSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Job'
         }
-    ]
+    ],
+    profile: String
 })
 
 applicantSchema.set('toJSON', {

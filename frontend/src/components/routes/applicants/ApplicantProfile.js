@@ -62,6 +62,7 @@ const chipStyles = makeStyles((theme) => ({
 }))
 
 const DisplayProfile = ({applicant, setEdit}) => {
+    console.log('app', applicant)
     const classes = chipStyles()
     let ratingValue
     if (applicant.ratings.length >= 0)
@@ -70,6 +71,9 @@ const DisplayProfile = ({applicant, setEdit}) => {
     return (
         <Paper>
             <Grid container spacing={2} style={{padding: '30px', fontSize: '1.6em'}}>
+                <Grid item xs={12}>
+                    {applicant.profile && <img src={'data:image/png;base64,'+applicant.profile} />}
+                </Grid>
                 <Grid item xs={12}>
                     <b>Name:</b> {applicant.user.name}
                 </Grid>
