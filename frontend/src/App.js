@@ -35,10 +35,9 @@ const App = () => {
         <AuthContext.Provider value={{authTokens, setAuthTokens: setTokens}}>
             <BrowserRouter>
             <AppToolBar>
-
                     <div>
                         <br/>
-                        <Route exact path='/' component={Home}/>
+                        <Route exact path='/' component={Profile}/>
                         <Route path='/register' component={MasterAuth}/>
                         <Route exact path='/newUser' component={MasterAuth}/>
                         <Route path='/applicantRegister' component={ApplicantRegister}/>

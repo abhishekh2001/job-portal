@@ -276,7 +276,7 @@ const ApplicantJobListDashboard = () => {
                                     </TableCell>
                                     <TableCell>{item.salaryPerMonth}</TableCell>
                                     <TableCell>{item.duration}</TableCell>
-                                    <TableCell>{format((new Date(item.deadline)), 'yyyy-MM-dd\'T\'HH:mm')}</TableCell>
+                                    <TableCell>{format((new Date(item.deadline)), 'dd-MM-yyyy\'T\'HH:mm')}</TableCell>
                                     <TableCell>{item.typeOfJob}</TableCell>
                                     <TableCell>
                                         {jobsAppliedTo.indexOf(item._id) >= 0 ?

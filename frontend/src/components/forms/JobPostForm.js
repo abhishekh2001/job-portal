@@ -257,7 +257,7 @@ const JobPostForm = () => {
     }
 
     if (created) {
-        return <Redirect to="/dashboard" />
+        return <Redirect to="/jobListDashboard" />
     }
 
     return (

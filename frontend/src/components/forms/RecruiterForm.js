@@ -46,6 +46,9 @@ const validationSchema = yup.object({
     contactNumber: yup
         .string('Enter your contact number')
         .required('Contact number is required')
+        .test('isnumber',
+            'Enter 10 digit phone number',
+            (v, c) => /^\d{10}$/.test(v))
 })
 
 

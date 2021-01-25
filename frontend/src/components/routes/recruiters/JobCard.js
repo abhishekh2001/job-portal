@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography'
 import {Link} from 'react-router-dom'
 import JobEditForm from '../../forms/JobEditForm'
 import JobEditPopup from './JobEditPopup'
+import format from "date-fns/format";
 
 const useStyles = makeStyles({
     root: {
@@ -33,7 +34,7 @@ const JobCard = ({job, deleteJob, getUpdatedJob}) => {
                             {job.title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            Date of posting: {job.dateOfPosting} <br/>
+                            Date of posting: {format((new Date(job.dateOfPosting)), 'dd-MM-yyyy')} <br/>
                             Number of applicants: {job.currApplicants}<br/>
                             Positions left: {job.maxPositions - job.currPositions}
                             {console.log('positions left ', job.maxPositions, job.currPositions)}
