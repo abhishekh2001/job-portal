@@ -191,7 +191,7 @@ const App = ({applicant, setMessage, classes, token}) => {
                             <input id="file" name="file" type="file" accept='.jpeg, .png, .jpg' onChange={(event) => {
                                 const file = event.currentTarget.files[0]
                                 if (file) {
-                                    if (file.size < 80000) {
+                                    if (file.size < 75000) {
                                         const reader = new FileReader()
                                         reader.onload = (upload) => {
                                             console.log('b64pic: ', upload)
