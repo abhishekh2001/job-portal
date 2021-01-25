@@ -74,7 +74,8 @@ const App = ({setMessage, classes, setRegistered}) => (
                     startYear: '',
                     endYear: ''
                 }
-            ]
+            ],
+            profile: ''
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, {setSubmitting}) => {
@@ -96,10 +97,30 @@ const App = ({setMessage, classes, setRegistered}) => (
               values,
               isSubmitting,
               touched,
-              errors
+              errors,
+              setFieldValue
           }) => (
             <Form className={classes.form}>
                 <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        {<img id='profilePic' />}
+                        <input id="file" name="file" type="file" accept='.jpeg, .png, .jpg' onChange={(event) => {
+                            const file = event.currentTarget.files[0]
+                            if (file) {
+                                if (file.size < 75000) {
+                                    const reader = new FileReader()
+                                    reader.onload = (upload) => {
+                                        console.log('b64pic: ', upload)
+                                        setFieldValue("profile", btoa(upload.target.result))
+                                        document.getElementById('profilePic').src = 'data:image/png;base64,' + btoa(upload.target.result)
+                                    }
+                                    reader.readAsBinaryString(file)
+                                } else {
+                                    window.alert('File size is too big')
+                                }
+                            }
+                        }} />
+                    </Grid>
                     <Grid item xs={12}>
                         <Field
                             component={TextField}
