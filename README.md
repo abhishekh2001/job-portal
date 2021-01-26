@@ -1,6 +1,6 @@
 # Job-portal
 
-A website that aims to easen up the process of job-searching and employee filtering by providing a unified, holistic environment where the two agents, recruiter and applicant, meet - the recruiter can post job and hire employees they deem suitable and the applicants can search for and apply them.
+A website that aims to easen up the process of job-searching and employee filtering by providing a unified, holistic environment where the two agents, recruiter and applicant, meet - the recruiter can post job and hire employees they deem suitable while the applicants can search for jbos and apply to them.
 
 The project is built using MERN stack technology implementing a REST API while following best practices as closely as possible.
 
